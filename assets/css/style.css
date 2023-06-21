@@ -33,6 +33,10 @@ h6 {
   font-family: "Raleway", sans-serif;
 }
 
+p {
+  font-size: large;
+}
+
 /*--------------------------------------------------------------
 # Back to top button
 --------------------------------------------------------------*/
@@ -593,7 +597,7 @@ section {
   cursor: pointer;
   display: inline-block;
   padding: 10px 15px;
-  font-size: 14px;
+  font-size: 24px;
   font-weight: 600;
   line-height: 1;
   text-transform: uppercase;
