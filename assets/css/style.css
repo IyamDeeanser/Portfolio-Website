@@ -1215,16 +1215,58 @@ section {
 /*--------------------------------------------------------------
 # Project Pages
 --------------------------------------------------------------*/
-.projectpage .photoheader {
+.navbar-brand
+{
+  font-size: medium;
+  font-weight: 605;
+  padding-left: 2rem;
+}
+
+.projectpage {
+ justify-content: center;
+ padding-bottom: 10rem;
+ width: 60rem; margin: auto;
+}
+
+.photoheader {
   object-fit: none; /* Do not scale the image */
   object-position: center; /* Center the image within the element */
   width: 100%;
   max-height: 400px;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
+
 .projectpage .projecttitle {
-  font-size: 87px;
+  font-size: 78px;
   font-weight: 700;
   margin-bottom: 20px;
   padding-bottom: 20px;
+  text-align: center;
+  width: 40rem; margin: auto;
+}
+
+.projectpage .projectphoto {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 60rem;
+}
+
+.projectpage .projectcontent {
+  font-size: 18px;
+  text-align: left;
+}
+
+.projectpage .largeheading {
+  font-size: 35px;
+  font-weight: 625;
+  padding-top: 10px;
+  padding-bottom: 20px;
+  text-align: left;
+}
+
+.projectpage .smallheading {
+  font-size: 25px;
+  font-weight: 625; 
+  padding-bottom: 20px;
+  text-align: center;
 }
