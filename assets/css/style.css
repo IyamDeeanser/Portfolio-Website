@@ -1251,6 +1251,12 @@ section {
   width: 60rem;
 }
 
+.projectpage .projectphotothirds {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  width: 20rem;
+}
+
 .projectpage .projectcontent {
   font-size: 18px;
   text-align: left;
