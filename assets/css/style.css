@@ -1225,7 +1225,9 @@ section {
 .projectpage {
  justify-content: center;
  padding-bottom: 10rem;
- width: 60rem; margin: auto;
+ margin-left: 27%;
+ margin-right: 27%;
+ overflow: hidden;
 }
 
 .photoheader {
@@ -1248,13 +1250,17 @@ section {
 .projectpage .projectphoto {
   padding-top: 20px;
   padding-bottom: 20px;
-  width: 60rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75%;
 }
 
 .projectpage .projectphotothirds {
   padding-top: 20px;
   padding-bottom: 20px;
   width: 20rem;
+  align-items: center;
 }
 
 .projectpage .projectcontent {
