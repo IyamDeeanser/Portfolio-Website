@@ -1221,13 +1221,64 @@ section {
   font-weight: 605;
   padding-left: 2rem;
 }
+@media only screen and (max-width: 600px) {
+  .projectpage {
+  justify-content: center;
+  padding-bottom: 10rem;
+  padding-left: 2%;
+  padding-right: 2%;
+  overflow: hidden;
+  }
+}
 
-.projectpage {
- justify-content: center;
- padding-bottom: 10rem;
- margin-left: 27%;
- margin-right: 27%;
- overflow: hidden;
+@media only screen and (max-width: 600px) {
+  .projectpage {
+  justify-content: center;
+  padding-bottom: 10rem;
+  padding-left: 2%;
+  padding-right: 2%;
+  overflow: hidden;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .projectpage {
+  justify-content: center;
+  padding-bottom: 10rem;
+  padding-left: 10%;
+  padding-right: 10%;
+  overflow: hidden;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .projectpage {
+  justify-content: center;
+  padding-bottom: 10rem;
+  padding-left: 15%;
+  padding-right: 15%;
+  overflow: hidden;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  .projectpage {
+  justify-content: center;
+  padding-bottom: 10rem;
+  padding-left: 20%;
+  padding-right: 20%;
+  overflow: hidden;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .projectpage {
+  justify-content: center;
+  padding-bottom: 10rem;
+  padding-left: 27%;
+  padding-right: 27%;
+  overflow: hidden;
+  }
 }
 
 .photoheader {
@@ -1244,7 +1295,6 @@ section {
   margin-bottom: 20px;
   padding-bottom: 20px;
   text-align: center;
-  width: 40rem; margin: auto;
 }
 
 .projectpage .projectphoto {
