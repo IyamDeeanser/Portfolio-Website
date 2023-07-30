@@ -45,43 +45,60 @@
             <iframe class="embed-responsive-item" src="https://youtu.be/1boJr-b7Rl4" allowfullscreen></iframe>
           </div>
 
-        <p class="projectcontent">Team Zephyr was a team I founded in the fall of 2021, with the goal of competing in the Canadian Satellite Design Challenge (CSDC). We were to build and fly a 
-            pop-can sized, fully functioning satellite to be flown to an altitude of 1 kilometer and dropped, collecting and sending data all the way down. 
-            I formed a team of six from students at my school and others, with the scope of our project covering outreach, programming, electronics design, and more. 
-            I acted as the team captain and development lead, overseeing team organization and the creation of the hardware, software, and electronics of the satellite.</p>
-
-        <p class="projectcontent">The goal of the competition was to successfully fly and recover this satellite, 
-            while simultaneously obtaining sponsorships, running outreach events, and writing design reports. <br>
-            In the end, We won the CSDC and represented Canada at the ESA finals in Bologna, Italy, winning Best Report there. <br><br>
-            More (a LOT more) details below about the whole project:
-        </p>
+        <p class="projectcontent">The “Copilot” engine was one of the first subteams I worked on at UBC Rocket. The goal of the engine was to build and test an MDF ablative in a 12 kilonewton rocket. 
+            <br>
+            I was involved in the design of the ignition system and ablative, as well as in a hands-on testing role.</p>
 
         <div>
-            <h3 class="largeheading">Cansat</h3>
-                <h3 class="smallheading">Hardware</h3>
+            <h3 class="largeheading">Ablative</h3>
                     <!-- Gallery -->
                     <div class="row">
                         <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\RotaSat\v1fc.png"
+                            src="..\assets\img\copilot\mandrel1.png"
                             class="w-100 shadow-1-strong rounded mb-4"
-                            alt="V1 Flight Computer Sled"
                         />
                         </div>
 
                         <div class="col-lg-4 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\RotaSat\v1lipo.png"
+                            src="..\assets\img\copilot\mandrel2.png"
                             class="w-100 shadow-1-strong rounded mb-4"
-                            alt="V1 Lipo Sled"
                         />
                         </div>
 
                         <div class="col-lg-4 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\RotaSat\v1cam.png"
+                            src="..\assets\img\copilot\mandrel3.png"
                             class="w-100 shadow-1-strong rounded mb-4"
-                            alt="V1 Payload Sled"
+                        />
+                        </div>
+                    </div>
+
+                    <p class="projectcontent">I designed and analyzed several 3D printable, weight-optimized mandrels for the alignment of the internal ablative stack. Turns out a solid model and low infill is best.</p>
+        </div>
+        <div>
+            <h3 class="largeheading">Igniter System</h3>
+                    <!-- Gallery -->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\copilot\igniter1.png"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\copilot\igniter2.png"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\copilot\igniter3.png"
+                            class="w-100 shadow-1-strong rounded mb-4"
                         />
                         </div>
                     </div>
@@ -90,178 +107,102 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\RotaSat\v1asm1.png"
+                            src="..\assets\img\copilot\igniter4.png"
                             class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Rotasat first assembly"
                         />
                         </div>
-                    
+
                         <div class="col-lg-6 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\RotaSat\v1asm2.png"
+                            src="..\assets\img\copilot\igniter5.png"
                             class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Alternate angle"
                         />
-                        </div>
-                    </div>
+                        </div>                    
 
-                    <p class="projectcontent">The CanSat itself consisted of three major sections: computer, power, and payload. They were affixed to a 3D printed frame with carbon fibre tubes. </p>
-                    <img src="..\assets\img\RotaSat\RCW.png" class="projectphoto" alt="Reaction Control Wheel Housing">
-                    <p class="projectcontent">Below, a 9V DC motor powered the first aluminum reaction control wheel flown on a CanSat. <br>
-                    Everything was built to survive a 50G flight on an L2 rocket, from the sleds to the parachute deployment hardware. 
-                    Each component was verified through finite element analysis and real-world weight tests.</p>
+                    <p class="projectcontent">Multiple versions of the ignition rig were designed, made, and tested. </p>
 
-                <h3 class="smallheading">Software</h3>
-                    <img src="..\assets\img\RotaSat\githubss.png" class="projectphoto" alt="Github">
-                    <p class="projectcontent">The software for the satellite was a state machine based on the orientation and control systems of my previous rocket, 
-                        with extended features for GNSS processing and live telemetry through a 915Mhz downlink. 
-                        The mathematics for the quaternion processing and accelerometer orientation were written by me. <br><br>
+                    <img src="..\assets\img\copilot\IgniterTesting.gif" class="projectphoto" style="width: 100%;">
 
-                        Check out the GitHub repository!</p>
-
-                        <div class="d-grid gap-2 col-8 mx-auto">
-                            <a href="https://github.com/IyamDeeanser/Zephyr" class="btn btn-dark bi bi-github" type="button"> Team Zephyr's GitHub Repository</button> <a> <br>
-                        </div>
-                <h3 class="smallheading">Electronics</h3>
-                    <!-- Gallery -->
-                    <div class="row">
-                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\fc1.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Flight Computer Version 1"
-                        />
-                        </div>
-                    
-                        <div class="col-lg-4 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\fc2.jpg"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Flight Computer Version 2"
-                        />
-                        </div>
-                    
-                        <div class="col-lg-4 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\fc3.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Flight Computer Version 3"
-                        />
-                    </div>
-                    <p class="projectcontent">Three major versions of the flight computer was constructed, with different parts each time due to the 2021-2022 chip shortage.</p>
-
-                <h3 class="smallheading">Testing</h3>
-                    <!-- Gallery -->
-                    <div class="row">
-                        <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\rangetest.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Flight Computer Version 1"
-                        />
-                        </div>
-                    
-                        <div class="col-lg-6 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\rcwtest.gif"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Flight Computer Version 2"
-                        />
-                        </div>
-                    </div>
-                    <p class="projectcontent">Range tests and control system tests were some of many tests done in advance to verify performance of the satellite in flight.</p>
+                    <p class="projectcontent">Additionally, I assembled several of the igniters and designed the camera system for test data collection.</p>
             </div>
-        </div>
-
-        <div>
-            <h3 class="largeheading">Ground Station</h3>
-                <h3 class="smallheading">Software</h3>
-                    <img src="..\assets\img\RotaSat\rcwtesting.gif" class="projectphoto" alt="Reaction Control Tuning">
-                    <p class="projectcontent">The ground station was written in Processing and displayed all of the data 
-                    coming down from the satellite, with display graphs for important data, as well as large buttons 
-                    for sending commands to the satellite in flight.</p>
-                <h3 class="smallheading">Hardware</h3>
-                    <img src="..\assets\img\RotaSat\case.png" class="projectphoto" alt="Cansat Case">
-                    <p class="projectcontent">I even found a nice box to put everything in and 
-                        package everything safely during transportation and before flight. 
-                        It’s a miracle we made it through the airport so many times.</p>
-        </div>
-        <div>
-            <h3 class="largeheading">Outreach</h3>
-                <h3 class="smallheading">Schools</h3>
-                    <!-- Gallery -->
-                    <div class="row">
-                        <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\outreach.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Mountainview Montessori"
-                        />
+            <div>
+                <h3 class="largeheading">Engine Testing</h3>
+                        <!-- Gallery -->
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\copilot\enginetesting1.png"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                            />
+                            </div>
+    
+                            <div class="col-lg-6 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\copilot\enginetesting2.png"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                            />
+                            </div>
                         </div>
-                    
-                        <div class="col-lg-6 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\outreach2.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt=""
-                        />
+    
+                        <p class="projectcontent">I assembled and prepared the engine for hotfires, mounting the endplates as well as preparing the
+                             MDF ablative for the LOX chill and lead in the static firing procedure.</p>
+                        <!-- Gallery -->
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\copilot\enginetesting3.jpg"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                            />
+                            </div>
+    
+                            <div class="col-lg-6 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\copilot\enginetesting4.png"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                            />
+                            </div>
                         </div>
-                    </div>
-                    <p class="projectcontent">I lead the outreach group to local elementary schools, 
-                        showing them how rockets fly in Kerbal Space Program and presenting 
-                        our satellite and Canada’s various space challenges. It was a wonderful time. </p>
-                    <!-- Gallery -->
-                    <div class="row">
-                        <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\online.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Instagram"
-                        />
-                        <img
-                        src="..\assets\img\RotaSat\online3.png"
-                        class="w-100 shadow-1-strong rounded mb-4"
-                        alt="Twitter"
-                        />
+                        <img src="..\assets\img\copilot\Copilot Assembly.png" class="projectphoto" style="width: 100%;">
+                        <p class="projectcontent">This included hydrostatic testing, utilizing a hydraulic pump and water to bring the chamber up to proof pressure, 
+                             as well as cold flow tests to verify the injector's spray inpingment pattern. I also aided in mounting the engine in preparation for the test.</p>
+                        
+                        <img src="..\assets\img\copilot\postfire1.png" class="projectphoto" style="width: 100%;">
+                        <!-- Gallery -->
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\copilot\postfire2.png"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                            />
+                            </div>
+    
+                            <div class="col-lg-6 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\copilot\postfire3.png"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                            />
+                            </div>
                         </div>
-                    
-                        <div class="col-lg-6 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\online4.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="SpaceQ"
-                        />
-                        <img
-                        src="..\assets\img\RotaSat\online2.png"
-                        class="w-100 shadow-1-strong rounded mb-4"
-                        alt="CSA"
-                        />
+                        <!-- Gallery -->
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\copilot\postfire4.png"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                            />
+                            </div>
+    
+                            <div class="col-lg-6 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\copilot\postfire5.jpg"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                            />
+                            </div>
                         </div>
-                    </div>
-                <h3 class="smallheading">Sponsorships</h3>
-                    <p class="projectcontent">We had social media accounts on different platforms, 
-                        and were recognized by the Canadian Space Agency, local news, and more. </p>
-                        <img src="..\assets\img\RotaSat\sponsor1.png" class="projectphoto" alt="All 9 sponsors">
-                    <!-- Gallery -->
-                    <div class="row">
-                        <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\sponsor2.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Instagram"
-                        />
-                        </div>
-                    
-                        <div class="col-lg-6 mb-4 mb-lg-0">
-                        <img
-                        src="..\assets\img\RotaSat\sponsor3.png"
-                        class="w-100 shadow-1-strong rounded mb-4"
-                        alt="CSA"
-                        />
-                        </div>
-                    </div>
-                    <p class="projectcontent">I scripted, filmed, and rendered the videos that we made and posted on our platforms.<br>
-                        Overall, our YouTube account received over 2000 views, and our Instagram collaborations 
-                        with other STEM accounts (such as @girlsinstemorg and JLCPCB) reached over 100,000 people.</p>
-        </div>
+                        <p class="projectcontent"> I disassembled and inspected the engine after the static firing. 
+                        In this case, some cracks were found in the injector plate welds, as well as large amounts of deterioration of the upper ablative plate.
+                        These problems were all addressed for the second version of the engine. <br>
+                         <br>This concludes the scope of the work I did on the first Copilot engine. <br> 
+                        Looking forward to hotfire #2!</p>
+              </div>          
 </body>
