@@ -57,42 +57,61 @@
 
                     <p class="projectcontent">As a grand finale, as all of my peers have insisted, Crater will fly on a K1103X and attempt to break the sound barrier. </p>
 
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Motor</th>
+                            <th scope="col">Altitude</th>
+                            <th scope="col">Max Speed</th>
+                            <th scope="col">Purpose</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">I600</th>
+                            <td>872m</td>
+                            <td>153m/s (550km/hr)</td>
+                            <td>CAR L1 & 2</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">J800</th>
+                            <td>1885m</td>
+                            <td>256m/s (921km/hr)</td>
+                            <td>CAR L3</td>
+                          </tr>
+                          <tr>
+                            <th scope="row">K1103X</th>
+                            <td>2523m</td>
+                            <td>346m/s (1246km/hr, or Mach 1.03)</td>
+                            <td>Sound barrier</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    <!-- Gallery -->
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\crater\prelaunch.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+                    
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\crater\postlaunch.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+                        </div>
                 <h3 class="smallheading">Flight Data</h3>
+                <p class="projectcontent">The flight data for Crater’s L1 certification flight is available here:</p>
                 <div class="ratio ratio-16x9">
                     <iframe src="https://getcurve.io/dashboard/snapshot/uhS1c38zdki2355b17WNKhrrSlhiF0Mk?orgId=0&from=0&to=69150&var-experiment_id=undefined" title="YouTube video" allowfullscreen></iframe>
                   </div>
-                    <p class="projectcontent">The software for the satellite was a state machine based on the orientation and control systems of my previous rocket, 
-                        with extended features for GNSS processing and live telemetry through a 915Mhz downlink. 
-                        The mathematics for the quaternion processing and accelerometer orientation were written by me. <br><br>
-
-                        Check out the GitHub repository!</p>
-
+                  <p class="projectcontent"> The important ones are velocity and altitude. </p>
+                  <img src="..\assets\img\crater\velalt.png" class="projectphoto">
+                    <p class="projectcontent"> </p><br> I am officially L2 certified!</p>
                 <h3 class="smallheading">Electronics</h3>
-                    <!-- Gallery -->
-                    <div class="row">
-                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\fc1.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Flight Computer Version 1"
-                        />
-                        </div>
-                    
-                        <div class="col-lg-4 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\fc2.jpg"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Flight Computer Version 2"
-                        />
-                        </div>
-                    
-                        <div class="col-lg-4 mb-4 mb-lg-0">
-                        <img
-                            src="..\assets\img\RotaSat\fc3.png"
-                            class="w-100 shadow-1-strong rounded mb-4"
-                            alt="Flight Computer Version 3"
-                        />
-                    </div>
                     <p class="projectcontent">Three major versions of the flight computer was constructed, with different parts each time due to the 2021-2022 chip shortage.</p>
 
                 <h3 class="smallheading">Testing</h3>
