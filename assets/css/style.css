@@ -493,6 +493,7 @@ section {
 .skills .progress .skill {
   padding: 10px 0;
   margin: 0;
+  font-size: 16px;
   text-transform: uppercase;
   display: block;
   font-weight: 600;
@@ -503,6 +504,7 @@ section {
 .skills .progress .skill .val {
   float: right;
   font-style: normal;
+  font-size: small;
 }
 
 .skills .progress-bar-wrap {
