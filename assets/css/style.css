@@ -1284,8 +1284,7 @@ section {
 }
 
 .photoheader {
-  object-fit: none; /* Do not scale the image */
-  object-position: center; /* Center the image within the element */
+  object-fit: cover; 
   width: 100%;
   max-height: 400px;
   margin-bottom: 2rem;
