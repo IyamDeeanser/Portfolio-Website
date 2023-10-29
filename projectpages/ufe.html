@@ -42,7 +42,7 @@
         <h1 class="projecttitle text-wrap">UFE</h1>
 
         <p class="projectcontent"> "The "Unamed Flight Engine" (pronouced "yoo-fee") is a kerosene/liquid oxygen fueled rocket engine that I'm in the process of testing. It's meant to be a testbed for a future
-            series of potential rocket engines that will eventually power UBC Rocket's first liquid-fueled rockets.</p>
+            series of potential rocket engines that will eventually power UBC Rocket's first liquid-fueled rockets. This is an in-depth article on my contribution to the design and testing process of UFE.</p>
 
         <div>
             <h3 class="largeheading">Design</h3>
@@ -121,15 +121,16 @@
                 </div>
                 <p class="projectcontent">You can see that perfect mixing (green/yellow) occurs mere millimeters away from the pintle exit, providing hopefully
                     excellent performance with the first CFD optimized pintle that UBC Rocket has developed.</p>
-                <img src="..\assets\img\UFE\closemix.png" class="projectphoto">
+                <img src="..\assets\img\UFE\closemix.png" class="projectphoto"> <br>
                 
         </div>
 
         <div>
-            <h3 class="largeheading">Testing</h3>
-                <p class="projectcontent">So far, UFE has successfully completed cold flow testing, with good mixing and atomization.</p>
+            <h3 class="largeheading">Testing: Hydrostatic Pressure</h3>
+                <!-- class="projectcontent">So far, UFE has successfully completed cold flow testing, with good mixing and atomization.</p>
                 <img src="..\assets\img\UFE\cfdata.png" class="projectphoto">
-                <img src="..\assets\img\UFE\fullflow.gif" class="projectphoto">
+                <img src="..\assets\img\UFE\fullflow.gif" class="projectphoto">-->
+                <p class="projectcontent">CURRENT STATUS: UFE has successfully completed its pre-hotfire test campaign, and is now awaiting hotfire!.</p>
                 <p class="projectcontent">Recently, I successfully led and conducted a hydrostatic pressure test on the engine.
                     This is similar to tests done on hydrogen COPVs or other tanks, and it's done to make
                     sure that the engine will contain the pressure of its operation. 
@@ -160,13 +161,168 @@
     
                     </div>
                 <img src="..\assets\img\UFE\hydrostat3.jpg" class="projectphoto">
-                <p class="projectcontent">UFE was pressurized successfully to its proof pressure of
-                    600PSI, and held there for over 5 minutes. None of the welds leaked, and the engine can now be
+                <p class="projectcontent">UFE was pressurized twice successfully to its proof pressure of
+                    700PSI, and held there for over 5 minutes. None of the welds or seals leaked, and the engine can now be
                     trusted to hold pressure. 
-                </p>
+                </p>                
+        </div>
 
-                <p class="projectcontent">Soon will be the installation of the igniter,
-                     our second hydrostat, and then hotfire!</p>
-                
+        <div>
+            <h3 class="largeheading">Testing: Cold Flow Part 1</h3>
+                    <p class="projectcontent">The first cold flow was conducted in hopes of seeing a nice, atomized spray pattern with a
+                        30 degree offset from the center. After hours of setup and figuring out a safe procedure to pressurize and operate the test stand, we conducted the test.
+                    </p>
+                    <img src="..\assets\img\UFE\badflow.jpg" class="projectphoto">
+                    <p class="projectcontent">As we can see here, the flow here is too narrow, and heavily distinct lines of "LOX" can be seen streaming from the center. 
+                        This was an issue, since having such extreme separation of oxidizer and fuel would cause combustion stability and startup issues. 
+                    </p>
+                    <p class="projectcontent">After some in-depth troubleshooting, I discovered that the interrupted annulus, that directs jets of fuel directly into the pintle, was misaligned.
+                        This was discovered in inspection of test footage, where the kerosene jets are offset from the radial holes of the pintle.
+                    </p>
+                    <img src="..\assets\img\UFE\annulusjetbad.jpg" class="projectphoto">
+        </div>
+
+        <div>
+                    <h3 class="largeheading">Injector Re-Manufacturing</h3>
+                            <p class="projectcontent">Eventually, I found out that all of the holes mounting both the pintle and the annulus were placed without reference to anything, 
+                                and thus nothing was aligned. Even the pintle itself had no relation between its mount and its orifices. Thus, I lead a re-manufacturing campaign through the nights of the weekdays.
+                            </p>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                                <img
+                                    src="..\assets\img\UFE\badclock1.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                />
+                                </div>
+                            
+                                <div class="col-lg-6 mb-4 mb-lg-0">
+                                <img
+                                    src="..\assets\img\UFE\badclock2.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                    alt=""
+                                />
+                                </div>
+            
+                            </div>
+                            <p class="projectcontent">We re-machined the annulus on a CNC to ensure no clocking issues were observed in its separators.
+                            </p>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                                <img
+                                    src="..\assets\img\UFE\annuluscnc1.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                />
+                                </div>
+                            
+                                <div class="col-lg-4 mb-4 mb-lg-0">
+                                <img
+                                    src="..\assets\img\UFE\annuluscnc2.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                    alt=""
+                                />
+                                </div>
+                                <div class="col-lg-4 mb-4 mb-lg-0">
+                                    <img
+                                    src="..\assets\img\UFE\annuluscnc3.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                    alt=""
+                                    />
+                                </div>
+                            </div>
+                            <img src="..\assets\img\UFE\newoldannulus.jpg" class="projectphoto">
+                            <p class="projectcontent">The pintle was re-machined as well, this time in 316 stainless steel for more durability (also, it's shinier!).</p>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                                <img
+                                    src="..\assets\img\UFE\pintlemachine.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                />
+                                </div>
+                            
+                                <div class="col-lg-6 mb-4 mb-lg-0">
+                                <img
+                                    src="..\assets\img\UFE\newoldpintle.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                    alt=""
+                                />
+                                </div>
+            
+                            </div>
+                            <p class="projectcontent">Finally, both of the injector plates had their mounting holes re-drilled and clocked correctly this time.</p>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                                <img
+                                    src="..\assets\img\UFE\newannulusmount.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                />
+                                </div>
+                            
+                                <div class="col-lg-6 mb-4 mb-lg-0">
+                                <img
+                                    src="..\assets\img\UFE\pintlemountnew.jpg"
+                                    class="w-100 shadow-1-strong rounded mb-4"
+                                    alt=""
+                                />
+                                </div>
+                            </div>
+        </div>
+
+        <div>
+            <h3 class="largeheading">Testing: Cold Flow Part 2</h3>
+                    <p class="projectcontent">The new annulus was cold-flowed first, beautifully.</p>
+                    <img src="..\assets\img\UFE\keroslow.gif" class="projectphoto">
+                    <img src="..\assets\img\UFE\annulusflow.jpg" class="projectphoto">
+                    <p class="projectcontent">And finally, after weeks of troubleshooting, problem solving, and sleepless nights, we have atomization.</p>
+                    <img src="..\assets\img\UFE\fullflowv3.gif" class="projectphoto">
+                    <img src="..\assets\img\UFE\goodflow.jpg" class="projectphoto">
+                    <p class="projectcontent">I've never seen anything more awesome.</p>
+        </div>
+        <div>
+            <h3 class="largeheading">Wet Dress Rehearsal</h3>
+                    <p class="projectcontent">On the 28th of October, 2023, we mounted the engine to the Darkstar test stand for the last time, and conducted a wet-dress rehearsal according to the actual hotfire procedure.</p>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\UFE\wdr1.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+                    
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\UFE\wdr2.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                            alt=""
+                        />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\UFE\wdr3.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+                    
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\UFE\wdr4.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                            alt=""
+                        />
+                        </div>
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                            <img
+                            src="..\assets\img\UFE\wdr5.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                            alt=""
+                            />
+                        </div>
+                    </div>
+
+
+                    <p class="projectcontent">After troubleshooting misbehaving valves and multiple leaks, the rehearsal successfully conducted a "cold static fire" with liquid nitrogen.</p>
+                    <p class="projectcontent">The Unnamed Flight Engine is now ready for hotfire.</p>
         </div>
 </body>
