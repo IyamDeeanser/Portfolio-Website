@@ -35,12 +35,12 @@
           <span class="navbar-toggler-icon"></span>
         </button>
     </nav>
-    <img src="..\assets\img\portfolio\First Flight.jpg" class="photoheader" style="object-position: 100% 30%;" alt="Sigma Space Active Control Rocket">
+    <img loading="lazy" src="..\assets\img\portfolio\First Flight.jpg" class="photoheader" style="object-position: 100% 30%;" alt="Sigma Space Active Control Rocket">
     <div class="projectpage">
 
         <h1 class="projecttitle text-wrap">Scalable Thrust Vector Control</h1>
 
-        <img src="..\assets\img\portfolio\TVC\Liftoff.png" class="projectphoto" alt="TVC Launch">
+        <img loading="lazy" src="..\assets\img\portfolio\TVC\Liftoff.png" class="projectphoto" alt="TVC Launch">
 
         <p class="projectcontent">The “Sigma Space” TVC rocket is my pride and joy. 
             It’s a thrust-vectoring, self-guided rocket utilizing fully custom-made, self-designed hardware, software, and electronics. 
@@ -51,7 +51,7 @@
             <h3 class="smallheading">International Science and Engineering Fair</h3>
             <a href="https://youthscience.ca/team-canada-wins-nine-awards-at-hybrid-regeneron-isef-2022-in-atlanta-ga/" class="link-dark text-decoration-underline">Team Canada wins nine awards at 
                 hybrid Regeneron ISEF 2022 in Atlanta, GA - Youth Science Canada | Youth Science Canada</a>
-            <img src="..\assets\img\portfolio\TVC\TCISEF.png" class="projectphoto" alt="Team Canada ISEF">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\TCISEF.png" class="projectphoto" alt="Team Canada ISEF">
             <p class="projectcontent">I participated as one of the 10 members of Team Canada for ISEF with the rocket.</p>
             <h3 class="smallheading">Canada-Wide Science Fair</h3>
             <a href="https://www.surreynowleader.com/news/rocket-project-launches-surrey-student-to-canada-wide-science-fair-award/" class="link-dark text-decoration-underline">Rocket project 
@@ -65,17 +65,17 @@
         <div>
             <h3 class="largeheading">Hardware</h3>
             <h3 class="smallheading">Thrust Vectoring Gimbal</h3>
-            <img src="..\assets\img\portfolio\TVC\TVCHardware.png" class="projectphoto" alt="Thrust Vectoring Hardware">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\TVCHardware.png" class="projectphoto" alt="Thrust Vectoring Hardware">
             <p class="projectcontent">The thrust vectoring gimbal is the center of the hardware show. Designed to be scalable, 
                 it uses two servos to imitate linear actuators in the servo bay, transmitting movement through 1mm steel pushrods and a compliant joint. </p>
             <h3 class="smallheading">Recovery System</h3>
-            <img src="..\assets\img\portfolio\TVC\RecoveryHardware.png" class="projectphoto" alt="Recovery Hardware">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\RecoveryHardware.png" class="projectphoto" alt="Recovery Hardware">
             <p class="projectcontent">I designed a “slingshot” style ejection system, possibly the first of its kind. It uses a servo-enabled pin to hold 
                 and release the steel-spring ejection system at 17m/s, or 61 kilometers per hour. </p>
             <h3 class="smallheading">Airframe</h3>
-            <img src="..\assets\img\portfolio\TVC\CADAssembly.png" class="projectphoto" alt="Airframe">
-            <img src="..\assets\img\portfolio\TVC\AFCFD.png" class="projectphoto" alt="Airframe">
-            <img src="..\assets\img\portfolio\TVC\RLAssembly.png" class="projectphoto" alt="Airframe">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\CADAssembly.png" class="projectphoto" alt="Airframe">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\AFCFD.png" class="projectphoto" alt="Airframe">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\RLAssembly.png" class="projectphoto" alt="Airframe">
             <p class="projectcontent">The airframe was designed for easy access to the internals and easy mounting of all components. </p>
             <p class="projectcontent">There were also some extra things like the launchpad and reaction control wheel. </p>
             <p class="projectcontent">I modelled it in Fusion360, simulated it in Ansys Fluent, and built it out of 3D-printed components.</p>
@@ -83,18 +83,18 @@
         <div>
             <h3 class="largeheading">Software</h3>
             <h3 class="smallheading">State Machine</h3>
-            <img src="..\assets\img\portfolio\TVC\StateMachine.png" class="projectphoto" alt="Finite State Machine">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\StateMachine.png" class="projectphoto" alt="Finite State Machine">
             <p class="projectcontent">The flight code is structured as a finite state machine with nonlinear progression to different stages.</p>
             <h3 class="smallheading">State Machine</h3>
-            <img src="..\assets\img\portfolio\TVC\quats.png" class="projectphoto" alt="Quaternion visualization">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\quats.png" class="projectphoto" alt="Quaternion visualization">
             <p class="projectcontent">The orientation system uses a quaternion orientation system, since it runs faster on the microcontroller and isn’t susceptible to gimbal lock. 
                 It took me quite a while to derive the code from a paper I found.</p>
-            <img src="..\assets\img\portfolio\TVC\quatscode.png" class="projectphoto" alt="Quaternion Code">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\quatscode.png" class="projectphoto" alt="Quaternion Code">
             <h3 class="smallheading">Controls and Tuning</h3>
-            <img src="..\assets\img\portfolio\TVC\simcode.png" class="projectphoto" alt="Javascript Simulation">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\simcode.png" class="projectphoto" alt="Javascript Simulation">
             <p class="projectcontent">The rocket flies on a PID controller, tuned both heuristically with ground testing and with a Python/JavaScript simulation. 
                 A full state feedback system being designed and tuned in Simulink (finally got it!) is being built right now.</p>
-            <img src="..\assets\img\portfolio\TVC\groundtesting.gif" class="projectphoto" alt="Javascript Simulation">
+            <img loading="lazy" src="..\assets\img\portfolio\TVC\groundtesting.gif" class="projectphoto" alt="Javascript Simulation">
             <p class="projectcontent">Ground testing utilizes a 3-axis 3D printed gimbal and a 2200kv brushless DC motor. Zeigler-Nichols tuning is used to lock in the gains.</p>
         </div>
         <div>
