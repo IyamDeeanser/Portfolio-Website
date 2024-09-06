@@ -82,7 +82,7 @@ p {
   bottom: 0;
   z-index: 9999;
   overflow: hidden;
-  background: #fff;
+  background: #2a2a2a;
 }
 
 #preloader:before {
@@ -135,8 +135,8 @@ p {
 @media (max-width: 991px) {
   #header {
     width: 300px;
-    background: #fff;
-    border-right: 1px solid #e6e9ec;
+    background: #3a3a3a;
+    /* border-right: 1px solid #e6e9ec; */
     left: -300px;
   }
 }
@@ -292,7 +292,7 @@ p {
 
 #hero:before {
   content: "";
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.5);
   position: absolute;
   bottom: 0;
   top: 0;
