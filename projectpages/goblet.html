@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Phoenix Engine</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="../assets/img/favicon.png" rel="icon">
+  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../assets/css/style.css" rel="stylesheet">
+</head>
+    
+<body class="text-light bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="../../index.html">Timothy Cai's Portfolio</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+    
+    <img loading="lazy" src="..\assets\img\portfolio\gobletcover.png" class="photoheader">
+    <div class="projectpage">
+
+        <h1 class="projecttitle text-wrap">Goblet</h1>
+
+        <p class="projectcontent"> "Goblet" is an ethanol/nitrous oxide fueled rocket engine that I'm in the process of designing right now. It's meant to be the first regeneratively cooled flight engine in Canada.
+            To achieve this goal, special focus must be taken towards achieving the required performance characteristics for flight. Details in this article will be a little more brief, as this project is still
+        under very active development. The name comes from how it looks like a cup with the TVC mount points - hence, "Goblet of Fire".</p>
+
+        <div>
+            <h3 class="largeheading">Design Criteria</h3>
+                <p class="projectcontent">Unlike previous engines I've designed, Goblet has to meet extremely strict requirements to be compatible with a flight vehicle of any kind.</p>
+                <ul>
+                    <li>Weight: Minimized. Previous engines range from 25kg to 10kg. Goblet must be an order of magnitude lighter, at around 1-2kg.</li>
+                    <li>Performance: 3.5kN of thrust has to be obtained in a 3 inch diameter combustion chamber to meet liftoff TWR.</li>
+                    <li>Reliablilty: Despite being lighter and higher thrust than any engine I've ever worked on, it must be capable of multiple firings without damage of any kind.</li>
+                </ul>
+                <img loading="lazy" src="..\assets\img\goblet\RPA.png" class="projectphoto">
+                <p class="projectcontent">To design the initial contour of the combustion chamber, Rocket Propulsion Analysis was used, 
+                    in addition to hand calculations and NASA's CEARUN chemical analysis program.</p>
+        </div>
+
+        <div>
+            <h3 class="largeheading">Chamber Design</h3>
+                <p class="projectcontent">The chamber is designed with DMLS manufacturing in mind, specifically to fit into a 5" fincan.</p>
+                <img loading="lazy" src="..\assets\img\goblet\chambercrosssection.png" class="projectphoto">
+                <img loading="lazy" src="..\assets\img\goblet\chamber3.png" class="projectphoto">
+                <p class="projectcontent">It utlizes a similar sealing implementation to UFE.</p>
+                <img loading="lazy" src="..\assets\img\goblet\flange.png" class="projectphoto">
+                <p class="projectcontent">Downcomer iterations:</p>
+                    <!-- Gallery -->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\goblet\down1.png"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+                    
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\goblet\down2.png"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                            alt=""
+                        />
+                        </div>
+
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\goblet\down3.png"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                                alt=""
+                            />
+                        </div>
+                    </div>
+
+                <p class="projectcontent">The exciting part is that the chamber has been printed! There are also plans to plasma coat the inner liner in zirconium oxide as a thermal barrier coating.</p>
+                    <!-- Gallery -->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\goblet\Chamber2.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+                    
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\goblet\Chamber.png"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                            alt=""
+                        />
+                        </div>
+
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\goblet\Machined Flange.png"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                                alt=""
+                            />
+                        </div>
+                    </div>
+        </div>
+        
+        <div>
+            <h3 class="largeheading">Chamber Simulation Validation</h3>
+                <p class="projectcontent">Dozens of CFD iterations were performed, consistently improving the design of the chamber over time.</p>
+                <p class="projectcontent">Flow simulations were done to optimize pressure drop and even out flow velocities.</p>
+                <!-- Gallery -->
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                    <img
+                        src="..\assets\img\goblet\chambercfd1.png"
+                        class="w-100 shadow-1-strong rounded mb-4"
+                    />
+                    </div>
+                
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img
+                        src="..\assets\img\goblet\chambercfd2.png"
+                        class="w-100 shadow-1-strong rounded mb-4"
+                        alt=""
+                    />
+                    </div>
+                </div>
+                <p class="projectcontent">FEA simulations based on CFD were done to ensure structural stability of the chamber.</p>
+                <img loading="lazy" src="..\assets\img\goblet\chamberfea.png" class="projectphoto">
+                <p class="projectcontent">CFD and thermal combination sims were done to ensure temperatures were underneath the safe threshold.</p>
+                    <!-- Gallery -->
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\goblet\CFDThermal1.png"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+                    
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\goblet\CFDThermal2.png"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                            alt=""
+                        />
+                        </div>
+                    </div>
+        </div>
+
+        <div>
+            <h3 class="largeheading">Injector Design</h3>
+            <p class="projectcontent">The injector is designed as a six-element coaxial swirl with film cooling. Special attention was paid to minimizing mass and maximizing printablilty.</p>
+            <p class="projectcontent">Specific manifolds are designed to distribute pressure evenly and minimize vortices.</p>
+            <img loading="lazy" src="..\assets\img\goblet\InjectorCrossSection.png" class="projectphoto">
+            <p class="projectcontent">CFD is ongoing, to produce the correct pressure drop, atomization, and mixing characteristics.</p>
+                <!-- Gallery -->
+                <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                <img
+                    src="..\assets\img\goblet\InjectorCFD.png"
+                    class="w-100 shadow-1-strong rounded mb-4"
+                />
+                </div>
+            
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                <img
+                    src="..\assets\img\goblet\InjectorCFD2.png"
+                    class="w-100 shadow-1-strong rounded mb-4"
+                    alt=""
+                />
+                </div>
+            </div>
+
+        </div>
+
+        <div>
+            <h3 class="largeheading">Plumbing and Sensors</h3>
+            <p class="projectcontent">Everything directly above the engine was also designed.</p>
+            <p class="projectcontent">Servo driven Hylok valves are used for the main fuel and oxidizer valves.</p>
+            <img loading="lazy" src="..\assets\img\goblet\plumbing.png" class="projectphoto">
+            <p class="projectcontent">A C6 motor will light the engine. A pressure transducer hasa direct access to the chamber for measurement.</p>
+            <img loading="lazy" src="..\assets\img\goblet\igniterPT.png" class="projectphoto">
+
+        </div>
+</body>
