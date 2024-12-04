@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>DISC-A Printer System</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="../assets/img/favicon.png" rel="icon">
+  <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../assets/css/style.css" rel="stylesheet">
+</head>
+    
+<body class="text-light bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="../../index.html">Timothy Cai's Portfolio</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
+    
+    <img loading="lazy" src="..\assets\img\portfolio\DISCCover.jpg" class="photoheader">
+    <div class="projectpage">
+
+        <h1 class="projecttitle text-wrap">DISC-A 01 Kinematics System</h1>
+
+        <p class="projectcontent">The DISC-A 01 is the first  operational printer that DI Self Composite Alloys has produced. It is a 3 axis movement system, compatible with metallic
+            3D printing, I was contracted to design and build over the course of an 8 month school term. It was an interesting exercise in designing a classical system that would be operating in 
+            a relatively extreme environment. 
+        </p>
+
+        <div>
+            <h3 class="largeheading">Design Criteria</h3>
+                <p class="projectcontent">The DISC-A 01 printer had to be able to operate long-term in a harsh, metal dust filled environment.</p>
+                <ul>
+                    <li>Size: The kinematic system  needed to cover a 400x400mm build area for the intended tests.</li>
+                    <li>Compatibility: There are significant forces and wear involved with the printing process.</li>
+                    <li>Reliablilty: A repeatable accuracy of 0.05mm had to be achieved.</li>
+                    <li>Cost: This was done on a limited budget of 1000$.</li>
+                </ul>
+                <img loading="lazy" src="..\assets\img\disc\design.png" class="projectphoto">
+                <p class="projectcontent">First principles were used in the design of the frame and sizing of the steppers and lead screws.</p>
+        </div>
+
+        <div>
+            <h3 class="largeheading">Design and Operation Gallery</h3>
+                <p class="projectcontent">Most design decisions were geared towards simplicity and compatibilty, and the final design converged to that of a gantry-based coreXY system.</p>
+                <img loading="lazy" src="..\assets\img\disc\gantryassem1.jpg" class="projectphoto">
+                <img loading="lazy" src="..\assets\img\disc\gantryassem2.jpg" class="projectphoto">
+                <p class="projectcontent">All moving parts and electronics were sealed against the environment or chosen to be compatible. For example, PTFE slides were used instead of ball bearings,
+                    and POM nuts instead of ball screws.
+                </p>
+                    <!-- Gallery -->
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\disc\stepperassem.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                        />
+                        </div>
+                    
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                        <img
+                            src="..\assets\img\disc\dustproof1.jpg"
+                            class="w-100 shadow-1-strong rounded mb-4"
+                            alt=""
+                        />
+                        </div>
+
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                            <img
+                                src="..\assets\img\disc\dustproof4.jpg"
+                                class="w-100 shadow-1-strong rounded mb-4"
+                                alt=""
+                            />
+                        </div>
+                    </div>
+                <p class="projectcontent">The system has run dozens of successful printing tests and has been in operation for over eight months.</p>
+                <img loading="lazy" src="..\assets\img\disc\afteroperation2.jpg" class="projectphoto">
+        </div>
+        
+        <div>
+            <h3 class="largeheading">Firmware and Electronics</h3>
+                <p class="projectcontent">Dozens of firmware iterations were written, all based on Marlin. The major difficulty was in getting the firmware operational 
+                    with a unique dual Y axis and quad Z axis, and creating comaptibility with a system that did not have classical 3D printing elements.
+                    A final configuration was written for this custom movement system.
+                </p>
+                <!-- Gallery -->
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                    <img
+                        src="..\assets\img\disc\marlin1.png"
+                        class="w-100 shadow-1-strong rounded mb-4"
+                    />
+                    </div>
+                
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img
+                        src="..\assets\img\disc\marlin2.png"
+                        class="w-100 shadow-1-strong rounded mb-4"
+                        alt=""
+                    />
+                    </div>
+                </div>
+                <div class="d-grid gap-2 col-8 mx-auto">
+                    <a href="https://github.com/IyamDeeanser/DISC-01" class="btn btn-light bi bi-github" type="button"> DISC-A 01 Marlin Fork</button> <a> <br>
+                </div>
+                <p class="projectcontent">Most of the changes were made on actual operating hardware, to speed up iteration times.</p>
+                <img loading="lazy" src="..\assets\img\disc\electronics2.jpg" class="projectphoto">
+
+                <p class="projectcontent">The MKS Gen L and TMC2209 stepper drivers were chosen to run the printer hardware, and a custom power delivery system
+                    was also developed to power everything.
+                </p>
+                <img loading="lazy" src="..\assets\img\disc\fullintegration.jpg" class="projectphoto">
+                <img loading="lazy" src="..\assets\img\disc\electronics.jpg" class="projectphoto">
+
+        </div>
+
+        <div>
+            <h3 class="largeheading">Manufacture and Assembly</h3>
+            <p class="projectcontent">The entire printer was designed to be manufactured and assembled by one person. All parts are either off the shelf, 3D-printable, or easily machined on a waterjet or mill.</p>
+            <img loading="lazy" src="..\assets\img\disc\zaxisassem1.jpg" class="projectphoto">
+            <img loading="lazy" src="..\assets\img\disc\fullintegration2.jpg" class="projectphoto">
+        </div>
+</body>
