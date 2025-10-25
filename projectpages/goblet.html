@@ -36,7 +36,7 @@
         </button>
     </nav>
     
-    <img loading="lazy" src="..\assets\img\portfolio\gobletcover.png" class="photoheader">
+    <img loading="lazy" src="..\assets\img\portfolio\gobletcover.webp" class="photoheader">
     <div class="projectpage">
 
         <h1 class="projecttitle text-wrap">Goblet</h1>
@@ -53,31 +53,31 @@
                     <li>Performance: 3.5kN of thrust has to be obtained in a 3 inch diameter combustion chamber to meet liftoff TWR.</li>
                     <li>Reliablilty: Despite being lighter and higher thrust than any engine I've ever worked on, it must be capable of multiple firings without damage of any kind.</li>
                 </ul>
-                <img loading="lazy" src="..\assets\img\goblet\RPA.png" class="projectphoto">
+                <img loading="lazy" src="..\assets\img\goblet\RPA.webp" class="projectphoto">
                 <p class="projectcontent">To design the initial contour of the combustion chamber, Rocket Propulsion Analysis was used, 
                     in addition to hand calculations and NASA's CEARUN chemical analysis program.</p>
         </div>
 
         <div>
             <h3 class="largeheading">Chamber Design</h3>
-                <p class="projectcontent">The chamber is designed with DMLS manufacturing in mind, specifically to fit into a 5" fincan.</p>
-                <img loading="lazy" src="..\assets\img\goblet\chambercrosssection.png" class="projectphoto">
-                <img loading="lazy" src="..\assets\img\goblet\chamber3.png" class="projectphoto">
+                <p class="projectcontent">The chamber is designed with DMLS manufacturing in mind, and will be printed in AlSi10Mg, specifically to fit into a 5" fincan.</p>
+                <img loading="lazy" src="..\assets\img\goblet\chambercrosssection.webp" class="projectphoto">
+                <img loading="lazy" src="..\assets\img\goblet\chamber3.webp" class="projectphoto">
                 <p class="projectcontent">It utlizes a similar sealing implementation to UFE.</p>
-                <img loading="lazy" src="..\assets\img\goblet\flange.png" class="projectphoto">
+                <img loading="lazy" src="..\assets\img\goblet\flange.webp" class="projectphoto">
                 <p class="projectcontent">Downcomer iterations:</p>
                     <!-- Gallery -->
                     <div class="row">
                         <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\goblet\down1.png"
+                            src="..\assets\img\goblet\down1.webp"
                             class="w-100 shadow-1-strong rounded mb-4"
                         />
                         </div>
                     
                         <div class="col-lg-4 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\goblet\down2.png"
+                            src="..\assets\img\goblet\down2.webp"
                             class="w-100 shadow-1-strong rounded mb-4"
                             alt=""
                         />
@@ -85,26 +85,27 @@
 
                         <div class="col-lg-4 mb-4 mb-lg-0">
                             <img
-                                src="..\assets\img\goblet\down3.png"
+                                src="..\assets\img\goblet\down3.webp"
                                 class="w-100 shadow-1-strong rounded mb-4"
                                 alt=""
                             />
                         </div>
                     </div>
 
-                <p class="projectcontent">The exciting part is that the chamber has been printed! There are also plans to plasma coat the inner liner in zirconium oxide as a thermal barrier coating.</p>
+                <p class="projectcontent">The exciting part is that the chamber has been printed! There are also plans to plasma coat the
+                     inner liner and injector face in zirconium oxide as a thermal barrier coating.</p>
                     <!-- Gallery -->
                     <div class="row">
                         <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\goblet\Chamber2.jpg"
+                            src="..\assets\img\goblet\Chamber1.webp"
                             class="w-100 shadow-1-strong rounded mb-4"
                         />
                         </div>
                     
                         <div class="col-lg-4 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\goblet\Chamber.png"
+                            src="..\assets\img\goblet\Chamber2.webp"
                             class="w-100 shadow-1-strong rounded mb-4"
                             alt=""
                         />
@@ -112,7 +113,7 @@
 
                         <div class="col-lg-4 mb-4 mb-lg-0">
                             <img
-                                src="..\assets\img\goblet\Machined Flange.png"
+                                src="..\assets\img\goblet\Chamber4.webp"
                                 class="w-100 shadow-1-strong rounded mb-4"
                                 alt=""
                             />
@@ -123,39 +124,42 @@
         <div>
             <h3 class="largeheading">Chamber Simulation Validation</h3>
                 <p class="projectcontent">Dozens of CFD iterations were performed, consistently improving the design of the chamber over time.</p>
-                <p class="projectcontent">Flow simulations were done to optimize pressure drop and even out flow velocities.</p>
+                <p class="projectcontent">Flow simulations were done to optimize pressure drop and even out flow velocities, as well as to confirm
+                    expected flowrates.</p>
                 <!-- Gallery -->
                 <div class="row">
                     <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
                     <img
-                        src="..\assets\img\goblet\chambercfd1.png"
+                        src="..\assets\img\goblet\chambercfd1.webp"
                         class="w-100 shadow-1-strong rounded mb-4"
                     />
                     </div>
                 
                     <div class="col-lg-6 mb-4 mb-lg-0">
                     <img
-                        src="..\assets\img\goblet\chambercfd2.png"
+                        src="..\assets\img\goblet\chambercfd2.webp"
                         class="w-100 shadow-1-strong rounded mb-4"
                         alt=""
                     />
                     </div>
                 </div>
                 <p class="projectcontent">FEA simulations based on CFD were done to ensure structural stability of the chamber.</p>
-                <img loading="lazy" src="..\assets\img\goblet\chamberfea.png" class="projectphoto">
-                <p class="projectcontent">CFD and thermal combination sims were done to ensure temperatures were underneath the safe threshold.</p>
+                <img loading="lazy" src="..\assets\img\goblet\chamberfea.webp" class="projectphoto">
+                <p class="projectcontent">CFD and thermal combination sims were done to ensure temperatures were underneath the safe threshold. 
+                    The steady state inner liner temperature is around 300C, which is well below the melting point of AlSi10Mg.
+                </p>
                     <!-- Gallery -->
                     <div class="row">
                         <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\goblet\CFDThermal1.png"
+                            src="..\assets\img\goblet\CFDThermal1.webp"
                             class="w-100 shadow-1-strong rounded mb-4"
                         />
                         </div>
                     
                         <div class="col-lg-6 mb-4 mb-lg-0">
                         <img
-                            src="..\assets\img\goblet\CFDThermal2.png"
+                            src="..\assets\img\goblet\CFDThermal2.webp"
                             class="w-100 shadow-1-strong rounded mb-4"
                             alt=""
                         />
@@ -165,37 +169,75 @@
 
         <div>
             <h3 class="largeheading">Injector Design</h3>
-            <p class="projectcontent">The injector is designed as a six-element coaxial swirl with film cooling. Special attention was paid to minimizing mass and maximizing printablilty.</p>
+            <p class="projectcontent">The injector is designed as a six-element gas-centered coaxial swirl with film cooling. 
+                Special attention was paid to minimizing mass and maximizing printablilty.</p>
             <p class="projectcontent">Specific manifolds are designed to distribute pressure evenly and minimize vortices.</p>
-            <img loading="lazy" src="..\assets\img\goblet\InjectorCrossSection.png" class="projectphoto">
-            <p class="projectcontent">CFD is ongoing, to produce the correct pressure drop, atomization, and mixing characteristics.</p>
+            <img loading="lazy" src="..\assets\img\goblet\InjectorCrossSection.webp" class="projectphoto">
+            <p class="projectcontent">CFD was finally completed after four months of simulation,
+                 to produce the correct pressure drop, two-phase flow, and mixing characteristics in combination with the chamber. 
+                This was also my first time using p-adaptive meshing, which was super cool. Over 80 iterations were designed and tested,
+            making this the most intense simulation driven design I have ever worked on.</p>
                 <!-- Gallery -->
                 <div class="row">
-                <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
-                <img
-                    src="..\assets\img\goblet\InjectorCFD.png"
-                    class="w-100 shadow-1-strong rounded mb-4"
-                />
+                    <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                    <img
+                        src="..\assets\img\goblet\InjectorCFD.webp"
+                        class="w-100 shadow-1-strong rounded mb-4"
+                    />
+                    </div>
+                
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img
+                        src="..\assets\img\goblet\gobletCFD.webp"
+                        class="w-100 shadow-1-strong rounded mb-4"
+                        alt=""
+                    />
+                    </div>
                 </div>
-            
-                <div class="col-lg-6 mb-4 mb-lg-0">
-                <img
-                    src="..\assets\img\goblet\InjectorCFD2.png"
-                    class="w-100 shadow-1-strong rounded mb-4"
-                    alt=""
-                />
-                </div>
-            </div>
-
+            <p class="projectcontent">The injector was then printed in Tough 2k resin and coldflowed at 110 PSI
+                to match flowrates with CFD and observe atomization qualities. It would have been best to perform this with C02, but it wasn't practical
+            due to the restrictions of a personal project.</p>
+            <img loading="lazy" src="..\assets\img\goblet\coldflow.webp" class="projectphoto">
+            <p class="projectcontent">The injector is now being printed!</p>
         </div>
 
         <div>
             <h3 class="largeheading">Plumbing and Sensors</h3>
             <p class="projectcontent">Everything directly above the engine was also designed.</p>
             <p class="projectcontent">Servo driven Hylok valves are used for the main fuel and oxidizer valves.</p>
-            <img loading="lazy" src="..\assets\img\goblet\plumbing.png" class="projectphoto">
-            <p class="projectcontent">A C6 motor will light the engine. A pressure transducer hasa direct access to the chamber for measurement.</p>
-            <img loading="lazy" src="..\assets\img\goblet\igniterPT.png" class="projectphoto">
+            <img loading="lazy" src="..\assets\img\goblet\plumbing.webp" class="projectphoto">
+            <p class="projectcontent">A C6 motor will light the engine through the injector face. A pressure transducer hasa direct access to the chamber for measurement.</p>
+            <img loading="lazy" src="..\assets\img\goblet\igniterPT.webp" class="projectphoto">
 
+        </div>
+
+        <div>
+            <h3 class="largeheading">CAD Assembly</h3>
+            <p class="projectcontent">Here's a few cool shots of the full CAD.</p>
+            <!-- Gallery -->
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                <img
+                    src="..\assets\img\goblet\gobletrender1.webp"
+                    class="w-100 shadow-1-strong rounded mb-4"
+                />
+                </div>
+            
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                <img
+                    src="..\assets\img\goblet\gobletrender2.webp"
+                    class="w-100 shadow-1-strong rounded mb-4"
+                    alt=""
+                />
+                </div>
+
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <img
+                        src="..\assets\img\goblet\gobletrender3.webp"
+                        class="w-100 shadow-1-strong rounded mb-4"
+                        alt=""
+                    />
+                </div>
+            </div>
         </div>
 </body>

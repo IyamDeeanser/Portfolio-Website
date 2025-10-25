@@ -1297,12 +1297,35 @@ section {
   margin-bottom: 2rem;
 }
 
-.projectpage .projecttitle {
-  font-size: 78px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  text-align: center;
+@media only screen and (min-width: 1px) {
+  .projectpage .projecttitle {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+  }
+}
+
+
+@media only screen and (min-width: 992px) {
+  .projectpage .projecttitle {
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .projectpage .projecttitle {
+    font-size: 78px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+  }
 }
 
 .projectpage .projectphoto {
