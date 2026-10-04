@@ -70,16 +70,33 @@
     if (F) loadPacks(narrow.matches && F.m ? F.m : F.d);
   }
   function ready(im) { return im && im.complete && im.naturalWidth; }
-  function frameAt(c) {
-    // each stop names the frame it rests on; between stops the frames play in order
-    var i = Math.min(Math.floor(c), n - 1), f = c - i;
-    var a = stops[i].frame, b = i < n - 1 ? stops[i + 1].frame : a;
-    var k = Math.round(a + (b - a) * f);
+  function nearest(k) {
     for (var d = 0; d < F.count; d++) {                 // nearest frame that has arrived
       if (ready(frames[k - d])) return frames[k - d];
       if (ready(frames[k + d])) return frames[k + d];
     }
-    return ready(still) ? still : null;
+    return null;
+  }
+  function framePos(c) {
+    // each stop names the frame it rests on; between stops the frames play in order
+    var i = Math.min(Math.floor(c), n - 1), f = c - i;
+    var a = stops[i].frame, b = i < n - 1 ? stops[i + 1].frame : a;
+    return a + (b - a) * f;
+  }
+  // the two source frames either side of the scroll position, and how far between them we are,
+  // so slow scrolling glides instead of stepping at the render's 24 fps
+  function framesAt(c) {
+    var x = framePos(c), k0 = Math.floor(x), t = x - k0;
+    var A = nearest(k0), B = t > 0.02 ? nearest(k0 + 1) : null;
+    if (!A) return { a: ready(still) ? still : null, b: null, t: 0, frame: false };
+    return { a: A, b: B && B !== A ? B : null, t: t, frame: true };
+  }
+  // keep the frames just ahead and behind decoded, so drawing them never stalls a scroll
+  var warmAt = -1;
+  function warm(c) {
+    var k = Math.round(framePos(c));
+    if (k === warmAt) return; warmAt = k;
+    for (var d = -4; d <= 6; d++) { var im = frames[k + d]; if (ready(im) && im.decode) im.decode().catch(function () {}); }
   }
 
   // ---- camera (only used to move over the still; the render brings its own)
@@ -97,6 +114,7 @@
     var p = Math.min(1, Math.max(0, -r.top / Math.max(span, 1)));
     var u = p * n, i = Math.min(Math.floor(u), n - 1), local = u - i;
     var f = i >= n - 1 ? 0 : Math.max(0, (local - HOLD) / (1 - HOLD));
+    f = 0.5 * f + 0.5 * f * f * (3 - 2 * f);            // ease out of each stop and into the next
     return i + f;
   }
 
@@ -109,7 +127,7 @@
     svg.setAttribute("viewBox", "0 0 " + pr.width + " " + pr.height);
   }
 
-  var cur = 0, active = -1, raf = 0, last = 0;
+  var cur = 0, active = -1, raf = 0, last = 0, primed = false;
   function setActive(k) {
     if (k === active) return;
     active = k;
@@ -119,8 +137,9 @@
   function rgba(a) { return "rgba(" + BG[0] + "," + BG[1] + "," + BG[2] + "," + a.toFixed(3) + ")"; }
 
   function draw() {
-    var media = F ? frameAt(cur) : (ready(still) ? still : null);
-    var isFrame = !!(F && media);                       // with a render, the still is its first frame
+    var fr = F ? framesAt(cur) : { a: ready(still) ? still : null, b: null, t: 0, frame: false };
+    var media = fr.a;
+    var isFrame = fr.frame;                             // with a render, the still is its first frame
     var iw = isFrame ? F.w : conf.still.w, ih = isFrame ? F.h : conf.still.h;
     var cam = isFrame ? [0.5, 0.5, 1] : camAt(cur);
     var s = (isFrame ? Math.min(W / iw, H / ih) : Math.min(W * 0.94 / iw, H * 0.92 / ih)) * cam[2];
@@ -130,6 +149,7 @@
     if (media) {
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(media, dx, dy, fw, fh);
+      if (fr.b) { ctx.globalAlpha = fr.t; ctx.drawImage(fr.b, dx, dy, fw, fh); ctx.globalAlpha = 1; }
       if (isFrame) {
         // the render window ends at the top: let the engine sink into shadow there instead
         var ft = F.fadeTop || 0.3, fb = F.fadeBottom || 0.06;
@@ -186,13 +206,22 @@
     svg.style.opacity = near;
   }
 
+  // the scene follows the scroll through two soft stages: a wheel notch never lurches it,
+  // it picks up speed, glides, and settles (a critically damped follow, ~0.3 s)
+  var mid = 0, TAU = 0.11;
   function frame(now) {
     raf = 0;
-    var dt = last ? Math.min(0.1, (now - last) / 1000) : 1 / 60; last = now;
+    var dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60; last = now;
     var t = target();
-    cur = reduce ? t : cur + (t - cur) * (1 - Math.exp(-dt / 0.12));
-    if (Math.abs(t - cur) < 0.0005) cur = t;
+    if (reduce) { mid = cur = t; }
+    else {
+      var a = 1 - Math.exp(-dt / TAU);
+      mid += (t - mid) * a;
+      cur += (mid - cur) * a;
+    }
+    if (Math.abs(t - mid) < 0.0004 && Math.abs(t - cur) < 0.0004) { mid = cur = t; }
     draw();
+    if (F) warm(cur);
     if (cur !== t) raf = requestAnimationFrame(frame); else last = 0;
   }
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
@@ -210,7 +239,7 @@
   var onScreen = false;
   new IntersectionObserver(function (es) {
     onScreen = es[0].isIntersecting;
-    if (onScreen) { load(); layout(); kick(); }
+    if (onScreen) { load(); layout(); if (!primed) { primed = true; mid = cur = target(); } kick(); }
   }, { rootMargin: "150% 0px" }).observe(root);
   window.addEventListener("scroll", function () { if (onScreen) kick(); }, { passive: true });
   new ResizeObserver(function () { layout(); kick(); }).observe(stage);
