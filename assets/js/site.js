@@ -40,6 +40,68 @@
       }, { root: rail, threshold: [0, 0.9, 1] });
       ends.observe(cards[0]); ends.observe(cards[cards.length - 1]);
     }
+
+    /* scrubber: the thumb shows how much of the timeline is in view and where; drag it, click the
+       track to jump there, or use the arrow / Home / End keys. Snapping is paused while dragging. */
+    var bar = document.querySelector(".rail-bar"), thumb = bar && bar.querySelector(".rail-thumb");
+    if (bar && thumb) {
+      bar.hidden = false;
+      var dragging = false, grab = 0;
+      var geo = function () {
+        var max = rail.scrollWidth - rail.clientWidth, bw = bar.clientWidth;
+        var tw = Math.max(48, bw * rail.clientWidth / Math.max(rail.scrollWidth, 1));
+        return { max: max, bw: bw, tw: tw, room: Math.max(bw - tw, 1) };
+      };
+      var paint = function () {
+        var g = geo(), f = g.max > 0 ? rail.scrollLeft / g.max : 0;
+        bar.hidden = g.max <= 1;
+        thumb.style.width = g.tw + "px";
+        thumb.style.transform = "translateX(" + (f * g.room) + "px)";
+        bar.setAttribute("aria-valuenow", Math.round(f * 100));
+      };
+      var scrollToX = function (x, smooth) {
+        var g = geo(), f = Math.min(1, Math.max(0, (x - grab) / g.room));
+        rail.scrollTo({ left: f * g.max, behavior: smooth && !reduce ? "smooth" : "auto" });
+      };
+      var px = function (e) { return e.clientX - bar.getBoundingClientRect().left; };
+      bar.addEventListener("pointerdown", function (e) {
+        var g = geo(), x = px(e), t0 = rail.scrollLeft / Math.max(g.max, 1) * g.room;
+        var onThumb = x >= t0 && x <= t0 + g.tw;
+        grab = onThumb ? x - t0 : g.tw / 2;               // keep hold of the thumb where it was grabbed
+        dragging = true; bar.classList.add("drag"); bar.setPointerCapture(e.pointerId);
+        rail.style.scrollSnapType = "none";
+        if (!onThumb) scrollToX(x, false);
+        e.preventDefault();
+      });
+      bar.addEventListener("pointermove", function (e) { if (dragging) scrollToX(px(e), false); });
+      var release = function () {
+        if (!dragging) return;
+        dragging = false; bar.classList.remove("drag");
+        // settle on the nearest role, as the arrows and swipes do
+        var rl = rail.getBoundingClientRect().left + parseFloat(getComputedStyle(rail).scrollPaddingLeft || 0) || 0;
+        var max = rail.scrollWidth - rail.clientWidth, best = 0, bd = Infinity;
+        for (var i = 0; i < cards.length; i++) {
+          var pos = Math.min(max, Math.max(0, rail.scrollLeft + cards[i].getBoundingClientRect().left - rl));
+          if (Math.abs(pos - rail.scrollLeft) < bd) { bd = Math.abs(pos - rail.scrollLeft); best = pos; }
+        }
+        rail.scrollTo({ left: best, behavior: reduce ? "auto" : "smooth" });
+        setTimeout(function () { rail.style.scrollSnapType = ""; }, 450);
+      };
+      bar.addEventListener("pointerup", release);
+      bar.addEventListener("pointercancel", release);
+      bar.addEventListener("keydown", function (e) {
+        var k = e.key;
+        if (k === "ArrowRight" || k === "ArrowDown") step(1);
+        else if (k === "ArrowLeft" || k === "ArrowUp") step(-1);
+        else if (k === "Home") rail.scrollTo({ left: 0, behavior: reduce ? "auto" : "smooth" });
+        else if (k === "End") rail.scrollTo({ left: rail.scrollWidth, behavior: reduce ? "auto" : "smooth" });
+        else return;
+        e.preventDefault();
+      });
+      rail.addEventListener("scroll", paint, { passive: true });
+      window.addEventListener("resize", paint);
+      paint();
+    }
   }
 
   /* clips play only while on screen */
