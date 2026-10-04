@@ -137,7 +137,7 @@
     "  float conv=xs<fw ? 1.0 : smoothstep(0.35,0.65,f);",
     "  float Sc=max(S,0.02);",
     "  float coneE=exp(-pow(ay/Sc,2.0)*1.6)*conv*(xs<fw ? 0.5 : 0.35*exp(-max(u,0.0)/4.0))*smoothstep(0.0,0.25,xs)*(1.0-tail);",
-    "  float tipg=step(0.0,k)*exp(-dxd*dxd/0.3-y*y*3.0)*0.12*Ik;",        // light scattered around each tip, upstream too
+    "  float tipg=step(0.0,k)*exp(-dxd*dxd/0.3-y*y*3.0)*0.12*3.3*exp(-max(k,0.0)/(4.5*max(P,0.1)));",  // keyed to the nearest diamond, so it is continuous at the tip        // light scattered around each tip, upstream too
     "  float rd=(0.2+0.3*(1.0-ms))*Ro;",
     "  float disk=step(0.0,k)*exp(-pow(dxd/0.2,2.0))*cone(rd,y+(hash(vec2(k,2.0))-0.5)*0.1)/rd*2.4*exp(-max(k,0.0)/2.5);",
     "  float heat=0.45+0.55*Pc;",                                       // cooler and dimmer when throttled down
