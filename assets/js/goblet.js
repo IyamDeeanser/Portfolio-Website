@@ -17,7 +17,7 @@
   var pin = root.querySelector(".gx-pin"), stage = root.querySelector(".gx-stage");
   var svg = root.querySelector(".gx-lead");
   var steps = root.querySelectorAll(".gx-step"), btns = root.querySelectorAll(".gx-index button");
-  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduce = false;   // the tour always animates, by choice, like the hero flame
   var narrow = window.matchMedia("(max-width: 860px)");
   var BG = conf.bg || [10, 11, 13];
   var DIM = conf.dim != null ? conf.dim : 0.62;

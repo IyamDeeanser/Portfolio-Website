@@ -20,7 +20,7 @@ Then open http://localhost:8000. All old URLs still work: `projectpages/*.html` 
 
 - `index.html`, `projectpages/*.html`: the pages. The text is the same as the current site.
 - `assets/hero/goblet-hero-side.webp`: your Goblet render, shadow removed and turned on its side for the hero. `goblet-vertical.webp`: the CAD cutaway (fallback for the Goblet tour).
-- `assets/js/plume.js`: the exhaust plume. A WebGL shader anchored to the nozzle exit; it ignites on load, throttles down as you scroll away, and stops drawing once it is off screen. Visitors with reduced motion get a still frame; browsers without WebGL get a soft CSS glow.
+- `assets/js/plume.js`: the exhaust plume. A WebGL shader anchored to the nozzle exit; it ignites on load, throttles down as you scroll away, and stops drawing once it is off screen. It animates for everyone, including visitors whose system asks for reduced motion; browsers without WebGL get a soft CSS glow.
 - `assets/js/site.js`: scroll reveals, the experience rail, the Goblet walkthrough, the photo viewer.
 - `assets/css/site.css`: all styles. Geist and Geist Mono are self-hosted in `assets/fonts` (SIL Open Font License).
 - `assets/img/`: original photos, linked from the photo viewer. `assets/disp/`: smaller copies of a few very large photos, used on the pages.

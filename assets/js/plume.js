@@ -19,7 +19,7 @@
   var DELAY = root.classList.contains("ign-pre") ? 1.1 : 0.35;  // seconds in the dark before the igniter
   var IGNITER = 0.55;                                            // seconds of igniter before main stage
   var MIN_THROTTLE = 0.2;
-  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduce = false;   // the flame always animates, by choice, even when the system asks for reduced motion
 
   var gl = canvas.getContext("webgl", { alpha: false, antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false });
   if (!gl) { hero.classList.add("no-webgl"); light(); return; }
