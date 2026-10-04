@@ -370,55 +370,28 @@ section { position: relative; }
   .tile.strip .tile-img { width: auto; aspect-ratio: 16 / 10; }
 }
 
-/* skills: a year chart drawn in the same language as the experience timeline. One scale from
-   --max years ago to now, with its year rules running through every row; each skill is a thin
-   line from the node where it started to the shared "Now" rule. Lines draw in on entry. */
-.yr { margin-top: 3.2rem; --nw: 14rem; --vw: 4.5rem; --g: clamp(1rem, 3vw, 2.5rem); }
-.yr-axis, .yr-row { display: grid; grid-template-columns: var(--nw) minmax(0, 1fr) var(--vw); gap: 0 var(--g); align-items: center; }
-.yr-axis { padding-bottom: .9rem; }
-.yr-ticks { position: relative; height: 1rem; font-family: var(--mono); font-size: .72rem; letter-spacing: .06em; color: var(--text-3); }
-.yr-ticks span { position: absolute; top: 0; left: calc(var(--t) * 100%); transform: translateX(-50%); white-space: nowrap; }
-.yr-ticks span:first-child { transform: none; }
-.yr-ticks span:last-child { transform: translateX(-100%); color: var(--accent); }
-.yr-rows { position: relative; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.yr-rows::before {          /* year rules and the Now rule, once for the whole chart */
-  content: ""; position: absolute; top: 0; bottom: 0; pointer-events: none;
-  left: calc(var(--nw) + var(--g)); right: calc(var(--vw) + var(--g));
-  background: linear-gradient(90deg, rgb(234 140 94 / .45), rgb(234 140 94 / .45)) right / 1px 100% no-repeat,
-              linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / calc(100% / var(--max)) 100% repeat-x;
+/* skills: years of experience as comparison bars. No track and no axis: each bar's length is the
+   measure (out of --max years) and the figure sits where the bar ends, set like the project stats. */
+.skx { list-style: none; margin: 3.4rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.9rem clamp(2.5rem, 6vw, 6rem); }
+.skx-item { display: grid; gap: .85rem; }
+.skx-name { font-size: clamp(1.05rem, 1.35vw, 1.2rem); color: var(--text-2); letter-spacing: -0.01em; transition: color .25s; }
+.skx-meter { display: flex; align-items: center; gap: 1rem; }
+.skx-bar {
+  flex: 0 0 calc((100% - 6.5rem) * var(--y) / var(--max)); height: 10px; border-radius: 10px;
+  background: linear-gradient(90deg, #6e3d27, var(--accent)); transform-origin: left center;
 }
-.yr-row { padding-block: 1.35rem; border-bottom: 1px solid var(--line); }
-.yr-name { font-size: clamp(1.02rem, 1.3vw, 1.15rem); color: var(--text); letter-spacing: -0.01em; }
-.yr-val { text-align: right; font-size: 1.5rem; font-weight: 500; letter-spacing: -0.04em; color: var(--text); }
-.yr-val small { font-family: var(--sans); font-size: .55em; letter-spacing: 0; color: var(--text-3); font-weight: 400; }
-.yr-track { position: relative; display: block; height: 30px; --x: calc((1 - var(--y) / var(--max)) * 100%); }
-.yr-bar {
-  position: absolute; top: 50%; height: 2px; margin-top: -1px; right: 0; left: var(--x);
-  background: linear-gradient(90deg, rgb(234 140 94 / .55), var(--accent)); transform-origin: left center;
-}
-.yr-track::before {         /* where it started: a node, as on the timeline */
-  content: ""; position: absolute; z-index: 1; top: 50%; left: var(--x); width: 12px; height: 12px; margin: -6px 0 0 -6px;
-  border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); transition: background .25s;
-}
-.yr-row:hover .yr-track::before { background: var(--accent); }
-.yr-row:hover .yr-name { color: #fff; }
+.skx-val { font-size: clamp(2rem, 3.2vw, 2.7rem); font-weight: 500; letter-spacing: -0.045em; line-height: 1; color: var(--text); white-space: nowrap; }
+.skx-val small { font-size: .9rem; font-weight: 400; letter-spacing: 0; color: var(--text-3); margin-left: .3rem; }
+.skx-item:hover .skx-name { color: var(--text); }
 @media (prefers-reduced-motion: no-preference) {
-  .yr.reveal .yr-track::before { opacity: 0; transform: scale(.4); transition: opacity .4s ease calc(.2s + var(--i) * .1s), transform .5s var(--ease) calc(.2s + var(--i) * .1s), background .25s; }
-  .yr.reveal .yr-bar { transform: scaleX(0); transition: transform 1.2s cubic-bezier(.3, .7, .1, 1) calc(.35s + var(--i) * .1s); }
-  .yr.reveal.in .yr-track::before { opacity: 1; transform: none; }
-  .yr.reveal.in .yr-bar { transform: none; }
+  .skx.reveal .skx-bar { transform: scaleX(0); transition: transform 1.1s var(--ease) calc(.15s + var(--i) * .09s); }
+  .skx.reveal .skx-val { opacity: 0; transform: translateX(-10px); transition: opacity .5s ease calc(.55s + var(--i) * .09s), transform .8s var(--ease) calc(.55s + var(--i) * .09s); }
+  .skx.reveal.in .skx-bar, .skx.reveal.in .skx-val { transform: none; opacity: 1; }
 }
 @media (max-width: 720px) {
-  .yr-axis { grid-template-columns: minmax(0, 1fr); }
-  .yr-axis > span:not(.yr-ticks) { display: none; }
-  .yr-rows::before { display: none; }
-  .yr-row { grid-template-columns: minmax(0, 1fr) 3.6rem; grid-template-areas: "name val" "track track"; row-gap: .5rem; }
-  .yr-name { grid-area: name; } .yr-val { grid-area: val; font-size: 1.25rem; }
-  .yr-track {           /* on phones each row carries its own rules */
-    grid-area: track; height: 22px;
-    background: linear-gradient(90deg, rgb(234 140 94 / .45), rgb(234 140 94 / .45)) right / 1px 100% no-repeat,
-                linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / calc(100% / var(--max)) 100% repeat-x;
-  }
+  .skx { grid-template-columns: minmax(0, 1fr); gap: 2rem; margin-top: 2.6rem; }
+  .skx-bar { height: 8px; flex-basis: calc((100% - 5rem) * var(--y) / var(--max)); }
+  .skx-val { font-size: 1.9rem; }
 }
 
 /* contact */
