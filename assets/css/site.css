@@ -370,52 +370,55 @@ section { position: relative; }
   .tile.strip .tile-img { width: auto; aspect-ratio: 16 / 10; }
 }
 
-/* skills: number tiles */
-/* skills: a year gauge. One scale from --max years ago to now; each bar ends at now and is
-   split into one segment per year. Bars fill toward now when the chart scrolls into view. */
-.yr { margin-top: 3.2rem; --cols: minmax(10rem, 15rem) minmax(0, 1fr) 4.5rem; --seg: 5px; }
-.yr-axis, .yr-row { display: grid; grid-template-columns: var(--cols); gap: 0 clamp(1rem, 3vw, 2.5rem); align-items: center; }
+/* skills: a year chart drawn in the same language as the experience timeline. One scale from
+   --max years ago to now, with its year rules running through every row; each skill is a thin
+   line from the node where it started to the shared "Now" rule. Lines draw in on entry. */
+.yr { margin-top: 3.2rem; --nw: 14rem; --vw: 4.5rem; --g: clamp(1rem, 3vw, 2.5rem); }
+.yr-axis, .yr-row { display: grid; grid-template-columns: var(--nw) minmax(0, 1fr) var(--vw); gap: 0 var(--g); align-items: center; }
 .yr-axis { padding-bottom: .9rem; }
 .yr-ticks { position: relative; height: 1rem; font-family: var(--mono); font-size: .72rem; letter-spacing: .06em; color: var(--text-3); }
 .yr-ticks span { position: absolute; top: 0; left: calc(var(--t) * 100%); transform: translateX(-50%); white-space: nowrap; }
 .yr-ticks span:first-child { transform: none; }
 .yr-ticks span:last-child { transform: translateX(-100%); color: var(--accent); }
-.yr-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.yr-row { padding-block: 1.35rem; border-bottom: 1px solid var(--line); transition: background .3s; }
+.yr-rows { position: relative; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.yr-rows::before {          /* year rules and the Now rule, once for the whole chart */
+  content: ""; position: absolute; top: 0; bottom: 0; pointer-events: none;
+  left: calc(var(--nw) + var(--g)); right: calc(var(--vw) + var(--g));
+  background: linear-gradient(90deg, rgb(234 140 94 / .45), rgb(234 140 94 / .45)) right / 1px 100% no-repeat,
+              linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / calc(100% / var(--max)) 100% repeat-x;
+}
+.yr-row { padding-block: 1.35rem; border-bottom: 1px solid var(--line); }
 .yr-name { font-size: clamp(1.02rem, 1.3vw, 1.15rem); color: var(--text); letter-spacing: -0.01em; }
 .yr-val { text-align: right; font-size: 1.5rem; font-weight: 500; letter-spacing: -0.04em; color: var(--text); }
 .yr-val small { font-family: var(--sans); font-size: .55em; letter-spacing: 0; color: var(--text-3); font-weight: 400; }
-.yr-track {
-  position: relative; display: block; height: 30px;
-  /* faint year gridlines, matching the scale above */
-  background: linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / calc(100% / var(--max)) 100% repeat-x,
-              linear-gradient(90deg, transparent calc(100% - 1px), var(--line) 0) 0 0 / 100% 100% no-repeat;
-}
+.yr-track { position: relative; display: block; height: 30px; --x: calc((1 - var(--y) / var(--max)) * 100%); }
 .yr-bar {
-  position: absolute; top: 50%; height: 10px; margin-top: -5px; right: 0; left: calc((1 - var(--y) / var(--max)) * 100%);
-  background: linear-gradient(90deg, rgb(234 140 94 / .32), var(--accent));
-  -webkit-mask: repeating-linear-gradient(90deg, #000 0 calc(100% / var(--y) - var(--seg)), transparent 0 calc(100% / var(--y)));
-  mask: repeating-linear-gradient(90deg, #000 0 calc(100% / var(--y) - var(--seg)), transparent 0 calc(100% / var(--y)));
-  border-radius: 2px; transform-origin: left center;
+  position: absolute; top: 50%; height: 2px; margin-top: -1px; right: 0; left: var(--x);
+  background: linear-gradient(90deg, rgb(234 140 94 / .55), var(--accent)); transform-origin: left center;
 }
-.yr-track::after {          /* the leading edge at now: a small hot cap */
-  content: ""; position: absolute; right: -3px; top: 50%; width: 6px; height: 16px; margin-top: -8px; border-radius: 3px;
-  background: #ffd9bf; box-shadow: 0 0 12px 2px rgb(234 140 94 / .7), 0 0 28px 6px rgb(234 140 94 / .25);
+.yr-track::before {         /* where it started: a node, as on the timeline */
+  content: ""; position: absolute; z-index: 1; top: 50%; left: var(--x); width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); transition: background .25s;
 }
-.yr-row:hover { background: linear-gradient(90deg, transparent, rgb(255 255 255 / .02), transparent); }
+.yr-row:hover .yr-track::before { background: var(--accent); }
+.yr-row:hover .yr-name { color: #fff; }
 @media (prefers-reduced-motion: no-preference) {
-  .yr.reveal .yr-bar { transform: scaleX(0); transition: transform 1.3s cubic-bezier(.2, .7, .1, 1) calc(.25s + var(--i) * .11s); }
-  .yr.reveal .yr-track::after { opacity: 0; transition: opacity .5s ease calc(1.2s + var(--i) * .11s); }
+  .yr.reveal .yr-track::before { opacity: 0; transform: scale(.4); transition: opacity .4s ease calc(.2s + var(--i) * .1s), transform .5s var(--ease) calc(.2s + var(--i) * .1s), background .25s; }
+  .yr.reveal .yr-bar { transform: scaleX(0); transition: transform 1.2s cubic-bezier(.3, .7, .1, 1) calc(.35s + var(--i) * .1s); }
+  .yr.reveal.in .yr-track::before { opacity: 1; transform: none; }
   .yr.reveal.in .yr-bar { transform: none; }
-  .yr.reveal.in .yr-track::after { opacity: 1; }
 }
 @media (max-width: 720px) {
-  .yr { --cols: minmax(0, 1fr) 3.6rem; }
-  .yr-axis { grid-template-columns: minmax(0, 1fr) 3.6rem; }
-  .yr-axis > span:first-child { display: none; }
-  .yr-row { grid-template-areas: "name val" "track track"; row-gap: .7rem; }
-  .yr-name { grid-area: name; } .yr-val { grid-area: val; font-size: 1.25rem; } .yr-track { grid-area: track; height: 22px; }
-  .yr-axis .yr-ticks { grid-column: 1 / -1; }
+  .yr-axis { grid-template-columns: minmax(0, 1fr); }
+  .yr-axis > span:not(.yr-ticks) { display: none; }
+  .yr-rows::before { display: none; }
+  .yr-row { grid-template-columns: minmax(0, 1fr) 3.6rem; grid-template-areas: "name val" "track track"; row-gap: .5rem; }
+  .yr-name { grid-area: name; } .yr-val { grid-area: val; font-size: 1.25rem; }
+  .yr-track {           /* on phones each row carries its own rules */
+    grid-area: track; height: 22px;
+    background: linear-gradient(90deg, rgb(234 140 94 / .45), rgb(234 140 94 / .45)) right / 1px 100% no-repeat,
+                linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / calc(100% / var(--max)) 100% repeat-x;
+  }
 }
 
 /* contact */
