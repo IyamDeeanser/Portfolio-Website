@@ -83,10 +83,10 @@
     var a = stops[i].frame, b = i < n - 1 ? stops[i + 1].frame : a;
     return a + (b - a) * f;
   }
-  // the two source frames either side of the scroll position, and how far between them we are,
-  // so slow scrolling glides instead of stepping at the render's 24 fps
+  // the source frame at the scroll position. conf.frames.blend (off by default) crossfades the two
+  // frames either side, which only pays off with a low-fps render (it softens edges in motion)
   function framesAt(c) {
-    var x = framePos(c), k0 = Math.floor(x), t = x - k0;
+    var x = framePos(c), blend = !!F.blend, k0 = blend ? Math.floor(x) : Math.round(x), t = blend ? x - k0 : 0;
     var A = nearest(k0), B = t > 0.02 ? nearest(k0 + 1) : null;
     if (!A) return { a: ready(still) ? still : null, b: null, t: 0, frame: false };
     return { a: A, b: B && B !== A ? B : null, t: t, frame: true };
