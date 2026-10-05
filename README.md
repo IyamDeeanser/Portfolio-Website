@@ -41,15 +41,17 @@ Other settings in the same JSON: `hold` (the share of each stop's scroll distanc
 
 ### The rendered animation
 
-The tour plays `Goblet Scroll Animation.mp4` (265 frames used, 23.976 fps). Each stop rests on one frame:
-overview 0 (0 s), bulkhead 48 (2 s), MOV/MFV 96 (4 s), chamber PT 144 (6 s), igniter 168 (7 s), injector 216 (9 s), chamber 264 (11 s).
+The tour plays `Goblet_Scroll_Animation_60fps_For_Website.mp4` (1080x1920, 60 fps, 660 frames). Each stop rests on one frame:
+overview 0 (0 s), bulkhead 120 (2 s), MOV/MFV 240 (4 s), chamber PT 360 (6 s; the cutaway fade starts at frame 362), igniter 420 (7 s), injector 540 (9 s), chamber 659 (end).
 Between stops the frames play in order as you scroll; on a stop the scene holds for a while before moving on.
 
 The frames live in `assets/goblet/`:
-- `d-0.json` to `d-5.json`: all 265 frames for desktop (920x1080 WebP, cropped to the engine's column), about 45 per pack.
-- `m-0.json`, `m-1.json`: every other frame at 552x648 for phones.
+- `d-*.json`: all 660 frames for desktop, 864x1080 WebP cropped to the render band (rows 286 to 1634 of the video), 48 per pack.
+- `m-*.json`: every other frame at 518x648 for phones.
 - `poster.webp`: frame 0, shown while the packs load and when JavaScript is off.
+
+Packs are ordered coarse to fine: every 8th frame first, then the frames halfway between, and so on. The tour works after the first couple of packs and reaches the full 60 fps as the rest arrive (until then it shows the nearest frame that has loaded). Hosts gzip the JSON, so the base64 inside costs almost nothing in transfer: about 28 MB for desktop and 6 MB for phones, fetched only when the section is near.
 
 The video's black was lifted to the page colour (#0A0B0D) when encoding, so the frame edges vanish. The top of each frame fades into the background, as do the sides and the bottom edge, so the render window never shows.
 
-To re-export after changing the animation, run `tools/encode_goblet_frames.py` (needs Python with Pillow, and ffmpeg) with the new video, then update each stop's `frame` and pointer `anchor` in that JSON (anchors are fractions of the 920x1080 cropped frame; a stop can list several).
+To re-export after changing the animation, run `tools/encode_goblet_frames.py` (needs Python with Pillow and numpy, and ffmpeg) with the new video. It prints the `frames` block for the gx-config JSON; paste that in, then update each stop's `frame` and pointer `anchor` (anchors are fractions of the cropped frame; a stop can list several).
