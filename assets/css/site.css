@@ -268,7 +268,8 @@ section { position: relative; }
 .figs { display: grid; grid-template-columns: repeat(2, auto); justify-content: start; gap: .2rem 2.6rem; margin-top: .2rem; }
 .fig b { display: block; font-size: clamp(1.9rem, 3vw, 2.6rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; }
 .fig span { color: var(--text-3); font-size: .875rem; }
-.gx { position: relative; margin-top: clamp(3rem, 7vw, 5rem); }
+.gx { position: relative; }
+.port-head { margin-top: clamp(4rem, 9vw, 7rem); }
 .gx-pin {
   position: relative; max-width: var(--wide); margin-inline: auto; padding-inline: var(--gutter);
   display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(1.5rem, 4vw, 4.5rem);
@@ -326,7 +327,7 @@ section { position: relative; }
 }
 
 /* projects: bento with exact cells */
-.bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 3rem; }
+.bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 16px; margin-top: 3rem; }
 .tile {
   position: relative; display: flex; flex-direction: column; text-decoration: none; background: var(--bg-2);
   border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; transition: border-color .3s;
@@ -358,8 +359,8 @@ section { position: relative; }
 .tile.big .stats span { font-size: .85rem; color: var(--text-3); }
 .tile.wide { grid-column: span 2; }
 .tile.wide .tile-img { aspect-ratio: 21 / 9; }
-.tile.strip { grid-column: span 2; flex-direction: row; }
-.tile.strip .tile-img { aspect-ratio: auto; width: 46%; flex: none; }
+.tile.strip { grid-column: 1 / -1; flex-direction: row; }
+.tile.strip .tile-img { aspect-ratio: auto; width: 46%; flex: none; max-height: 340px; }
 .tile.strip .tile-body { align-content: center; }
 @media (max-width: 960px) {
   .bento { grid-template-columns: 1fr 1fr; }
@@ -382,7 +383,7 @@ section { position: relative; }
 .skx-meter { display: flex; align-items: center; gap: 1rem; }
 .skx-bar {
   flex: 0 0 calc((100% - 6.5rem) * var(--y) / var(--max)); height: 10px; border-radius: 10px;
-  background: linear-gradient(90deg, #6e3d27, var(--accent)); transform-origin: left center;
+  background: var(--accent); transform-origin: left center;
 }
 .skx-val { font-size: clamp(2rem, 3.2vw, 2.7rem); font-weight: 500; letter-spacing: -0.045em; line-height: 1; color: var(--text); white-space: nowrap; }
 .skx-val small { font-size: .9rem; font-weight: 400; letter-spacing: 0; color: var(--text-3); margin-left: .3rem; }
