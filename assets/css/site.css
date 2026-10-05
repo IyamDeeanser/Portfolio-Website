@@ -72,6 +72,15 @@ svg.i { width: 1.1em; height: 1.1em; flex: none; }
 .pill.line { border-color: var(--line-2); color: var(--text); }
 .pill.line:hover { border-color: var(--text-2); background: var(--bg-3); }
 .pill.small { height: 32px; padding: 0 .85rem; font-size: .8125rem; }
+/* the hero's main action: jump straight to the projects */
+.pill.skip {
+  height: 56px; padding: 0 1.6rem 0 1.75rem; gap: .6rem; font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.01em;
+  background: var(--accent); color: var(--accent-ink); box-shadow: 0 10px 30px -12px rgb(234 140 94 / .55);
+}
+.pill.skip:hover { background: #f29d72; }
+.pill.skip .i { width: 1.15em; height: 1.15em; transition: transform .35s var(--ease); }
+.pill.skip:hover .i { transform: translateY(3px); }
+.hero-sub .cta { align-items: center; }
 .nav .pill.small { color: var(--bg); }
 @media (max-width: 720px) {
   .nav-links a.hide-s { display: none; }
@@ -269,7 +278,7 @@ section { position: relative; }
 .fig b { display: block; font-size: clamp(1.9rem, 3vw, 2.6rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1.1; }
 .fig span { color: var(--text-3); font-size: .875rem; }
 .gx { position: relative; }
-.port-head { margin-top: clamp(4rem, 9vw, 7rem); }
+.port-head { margin-top: clamp(4rem, 9vw, 7rem); scroll-margin-top: 104px; }   /* "Skip to portfolio" lands clear of the nav */
 .gx-pin {
   position: relative; max-width: var(--wide); margin-inline: auto; padding-inline: var(--gutter);
   display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(1.5rem, 4vw, 4.5rem);
