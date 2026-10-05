@@ -176,7 +176,9 @@
   var U = {};
   ["uExit", "uR", "uTf", "uP", "uSpark", "uFlash", "uJit", "uJit2", "uAtt"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
 
-  var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  // render resolution: up to 1.5x on dense screens, and lowered automatically if frames run long (the plume
+  // is soft, so a smaller buffer scaled up looks the same, and it keeps scrolling through the hero smooth)
+  var dpr = Math.min(window.devicePixelRatio || 1, 1.5), DPR_MIN = 0.5, slow = 0, frames = 0, sumDt = 0;
   var exitPx = [0, 0], radPx = 1;
   function layout() {
     var cr = canvas.getBoundingClientRect(), er = engine.getBoundingClientRect();
@@ -249,8 +251,17 @@
   }
 
   var visible = true, running = false;
+  var lastLoop = 0;
   function loop(now) {
-    if (!visible || document.hidden) { running = false; return; }
+    if (!visible || document.hidden) { running = false; lastLoop = 0; return; }
+    if (lastLoop) {
+      sumDt += now - lastLoop; frames++;
+      if (frames === 30) {                               // averaging under ~45 fps: render fewer pixels
+        if (sumDt / frames > 22 && dpr > DPR_MIN && ++slow >= 1) { dpr = Math.max(DPR_MIN, dpr * 0.8); layout(); }
+        frames = 0; sumDt = 0;
+      }
+    }
+    lastLoop = now;
     draw(now);
     requestAnimationFrame(loop);
   }

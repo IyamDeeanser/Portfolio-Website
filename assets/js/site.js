@@ -8,7 +8,11 @@
   var lenis = null;
   if (window.Lenis) {
     try {
-      lenis = new window.Lenis({ lerp: 0.09, wheelMultiplier: 1, anchors: true, allowNestedScroll: true, autoRaf: true });
+      // tuned like hermeus.com: every wheel input glides for 1.6 s on an exponential ease-out
+      lenis = new window.Lenis({
+        duration: 1.6, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+        wheelMultiplier: 0.9, touchMultiplier: 1.4, anchors: true, allowNestedScroll: true, autoRaf: true
+      });
       window.__lenis = lenis;
     } catch (e) { lenis = null; }
   }
