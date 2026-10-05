@@ -8,11 +8,10 @@
   var lenis = null;
   if (window.Lenis) {
     try {
-      // tuned after hermeus.com, with a touch more carry: every wheel input glides for 1.8 s on an
-      // exponential ease-out. Like the hero flame, it stays on even when the system asks for reduced
+      // tuned after hermeus.com: every wheel input glides for 0.9 s on an exponential ease-out. Like the hero flame, it stays on even when the system asks for reduced
       // motion (Lenis would otherwise quietly fall back to plain scrolling there).
       lenis = new window.Lenis({
-        duration: 1.8, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+        duration: 0.9, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
         wheelMultiplier: 1, touchMultiplier: 1.4, anchors: true, allowNestedScroll: true, autoRaf: true,
         respectReducedMotion: false
       });
