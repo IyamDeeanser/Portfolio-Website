@@ -261,7 +261,8 @@
     var t = target();
     if (reduce) { mid = cur = t; }
     else {
-      var a = 1 - Math.exp(-dt / TAU);
+      // with smooth wheel scrolling the scroll itself already glides, so follow it more tightly
+      var a = 1 - Math.exp(-dt / (window.__lenis ? TAU * 0.55 : TAU));
       mid += (t - mid) * a;
       cur += (mid - cur) * a;
     }
@@ -278,7 +279,9 @@
       var k = +b.getAttribute("data-go");
       var top = root.getBoundingClientRect().top + window.scrollY;
       var span = root.offsetHeight - window.innerHeight;
-      window.scrollTo({ top: top + (k + HOLD * 0.5) / n * span, behavior: reduce ? "auto" : "smooth" });
+      var y = top + (k + HOLD * 0.5) / n * span;
+      if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.4 });
+      else window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
     });
   });
 

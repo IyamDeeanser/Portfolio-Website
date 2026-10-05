@@ -3,6 +3,16 @@
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var IO = "IntersectionObserver" in window;
 
+  /* smooth, weighted wheel scrolling everywhere (Lenis). Touch and keyboard scrolling stay native, nested
+     scrollers (the experience rail) keep their own gestures, and in-page links glide to their target. */
+  var lenis = null;
+  if (window.Lenis) {
+    try {
+      lenis = new window.Lenis({ lerp: 0.09, wheelMultiplier: 1, anchors: true, allowNestedScroll: true, autoRaf: true });
+      window.__lenis = lenis;
+    } catch (e) { lenis = null; }
+  }
+
   /* nav hairline once the page leaves the very top */
   var nav = document.querySelector(".nav"), top = document.getElementById("top-sentinel");
   if (nav && top && IO) new IntersectionObserver(function (e) { nav.classList.toggle("edge", !e[0].isIntersecting); }).observe(top);
@@ -165,7 +175,7 @@
   links.forEach(function (a, k) {
     a.addEventListener("click", function (e) {
       if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-      e.preventDefault(); idx = k; show(); if (!dlg.open) dlg.showModal();
+      e.preventDefault(); idx = k; show(); if (!dlg.open) { dlg.showModal(); if (lenis) lenis.stop(); }
     });
   });
   dlg.addEventListener("click", function (e) {
@@ -181,5 +191,5 @@
     if (e.key === "ArrowLeft") { idx = (idx - 1 + links.length) % links.length; show(); }
     if (e.key === "ArrowRight") { idx = (idx + 1) % links.length; show(); }
   });
-  dlg.addEventListener("close", function () { stage.innerHTML = ""; });
+  dlg.addEventListener("close", function () { stage.innerHTML = ""; if (lenis) lenis.start(); });
 })();
