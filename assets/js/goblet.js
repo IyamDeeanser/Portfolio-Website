@@ -43,31 +43,77 @@
   var still = new Image(), frames = [], loaded = false;
   still.decoding = "async";
   still.onload = function () { kick(); };
-  function b64Image(b64) {
-    var bin = atob(b64), len = bin.length, u8 = new Uint8Array(len);
-    for (var i = 0; i < len; i++) u8[i] = bin.charCodeAt(i);
-    var im = new Image(); im.decoding = "async";
-    im.src = URL.createObjectURL(new Blob([u8], { type: "image/webp" }));
-    return im;
+  // packs are unpacked (JSON, base64 -> image blobs) in a background worker so the work never lands
+  // on the main thread mid-scroll; if a worker can't start (e.g. a strict CSP), it's done here instead
+  function unpack(j) {
+    var out = [];
+    for (var k = 0; k < j.frames.length; k++) {
+      var b = atob(j.frames[k]), u = new Uint8Array(b.length);
+      for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+      out.push(new Blob([u], { type: j.type || "image/webp" }));
+    }
+    return out;
+  }
+  var worker = null, pending = {}, reqId = 0;
+  function mainUnpack(src, done) {
+    fetch(src).then(function (r) { return r.json(); }).then(function (j) { done(j.first, j.step, unpack(j)); })
+      .catch(function () { done(null); });
+  }
+  try {
+    worker = new Worker(URL.createObjectURL(new Blob([unpack.toString() + ";onmessage=function(e){var d=e.data;fetch(d.src).then(function(r){return r.json()})" +
+      ".then(function(j){postMessage({id:d.id,first:j.first,step:j.step,blobs:unpack(j)})}).catch(function(){postMessage({id:d.id,err:1})})}"],
+      { type: "text/javascript" })));
+    worker.onmessage = function (e) {
+      var d = e.data, cb = pending[d.id]; delete pending[d.id];
+      if (cb) cb(d.err ? null : d.first, d.step, d.blobs);
+    };
+    worker.onerror = function () {                      // blocked or broken: finish the queue here
+      worker = null;
+      Object.keys(pending).forEach(function (id) { var p = pending[id]; delete pending[id]; mainUnpack(p.src, p); });
+    };
+  } catch (e) { worker = null; }
+  function getPack(src, done) {
+    src = new URL(src, location.href).href;
+    if (!worker) return mainUnpack(src, done);
+    var id = ++reqId; done.src = src; pending[id] = done;
+    worker.postMessage({ id: id, src: src });
   }
   function loadPacks(packs) {
-    var i = 0;
-    (function next() {
-      if (i >= packs.length) return;
-      var p = packs[i++];
-      fetch(p.src).then(function (r) { return r.json(); }).then(function (j) {
-        j.frames.forEach(function (b64, k) {
-          var im = b64Image(b64), idx = j.first + k * j.step;
-          im.onload = kick; frames[idx] = im;
+    // coarse-to-fine order, two requests in flight
+    var i = 0, busy = 0;
+    function next() {
+      while (busy < 2 && i < packs.length) {
+        busy++;
+        getPack(packs[i++].src, function (first, step, blobs) {
+          busy--;
+          if (blobs) blobs.forEach(function (b, k) {
+            var im = new Image(); im.decoding = "async"; im.onload = kick;
+            im.src = URL.createObjectURL(b); frames[first + k * step] = im;
+          });
+          kick(); next();
         });
-        kick(); next();
-      }).catch(next);
-    })();
+      }
+    }
+    next();
+  }
+  // AVIF where the browser has it (well under half the size of WebP); otherwise the WebP fallback set
+  var AVIF1 = "data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADrbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAAB5pbG9jAAAAAEQAAAEAAQAAAAEAAAETAAAAIQAAAChpaW5mAAAAAAABAAAAGmluZmUCAAAAAAEAAGF2MDFDb2xvcgAAAABqaXBycAAAAEtpcGNvAAAAFGlzcGUAAAAAAAAAAQAAAAEAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAABdpcG1hAAAAAAAAAAEAAQQBAoMEAAAAKW1kYXQSAAoIGAAGiAhoNCAyExlHh4Yhh5555oAAAJBAyRxhQoo=";
+  function avifOK(cb) {
+    var im = new Image(), t = setTimeout(function () { cb(false); cb = function () {}; }, 1500);
+    im.onload = function () { clearTimeout(t); cb(im.width > 0); }; im.onerror = function () { clearTimeout(t); cb(false); };
+    im.src = AVIF1;
   }
   function load() {
     if (loaded) return; loaded = true;
     still.src = conf.still.src;
-    if (F) loadPacks(narrow.matches && F.m ? F.m : F.d);
+    if (F) avifOK(function (ok) { loadPacks(!ok && F.fb ? F.fb : (narrow.matches && F.m ? F.m : F.d)); });
+  }
+  // fetch in the background soon after the page settles (the hero's ignition), so the frames are usually
+  // all here before anyone scrolls this far; on data-saver or slow connections, wait until the tour is near
+  var cn = navigator.connection || {};
+  if (!(cn.saveData || /2g|3g/.test(cn.effectiveType || ""))) {
+    var soon = function () { setTimeout(function () { (window.requestIdleCallback || function (f) { setTimeout(f, 1); })(load, { timeout: 2000 }); }, 2500); };
+    if (document.readyState === "complete") soon(); else window.addEventListener("load", soon);
   }
   function ready(im) { return im && im.complete && im.naturalWidth; }
   function nearest(k) {

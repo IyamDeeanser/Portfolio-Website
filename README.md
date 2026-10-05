@@ -46,11 +46,16 @@ overview 0 (0 s), bulkhead 120 (2 s), MOV/MFV 240 (4 s), chamber PT 360 (6 s; th
 Between stops the frames play in order as you scroll; on a stop the scene holds for a while before moving on.
 
 The frames live in `assets/goblet/`:
-- `d-*.json`: all 660 frames for desktop, 864x1080 WebP cropped to the render band (rows 286 to 1634 of the video), 48 per pack.
-- `m-*.json`: every other frame at 518x648 for phones.
+- `d-*.json`: all 660 frames for desktop, 864x1080 AVIF cropped to the render band (rows 286 to 1634 of the video).
+- `m-*.json`: every other frame at 518x648 AVIF for phones.
+- `w-*.json`: every other frame at 518x648 WebP, for the few browsers without AVIF.
 - `poster.webp`: frame 0, shown while the packs load and when JavaScript is off.
 
-Packs are ordered coarse to fine: every 8th frame first, then the frames halfway between, and so on. The tour works after the first couple of packs and reaches the full 60 fps as the rest arrive (until then it shows the nearest frame that has loaded). Hosts gzip the JSON, so the base64 inside costs almost nothing in transfer: about 28 MB for desktop and 6 MB for phones, fetched only when the section is near.
+Loading is tuned for the first impression:
+- AVIF is well under half the size of WebP at the same look: about 11 MB for desktop and 3 MB for phones, gzipped in transfer.
+- The packs start downloading in the background about 2.5 s after the page loads (after the hero ignites), so they are usually all in before anyone scrolls to the tour. With data saver on or on a 2G/3G connection, they wait until the tour is near.
+- Packs are ordered coarse to fine: every 8th frame first, then the frames halfway between, and so on. Until the full 60 fps arrives the tour shows the nearest frame that has loaded.
+- Unpacking (JSON and base64 to images) runs in a background worker, so it never stalls scrolling.
 
 The video's black was lifted to the page colour (#0A0B0D) when encoding, so the frame edges vanish. The top of each frame fades into the background, as do the sides and the bottom edge, so the render window never shows.
 
