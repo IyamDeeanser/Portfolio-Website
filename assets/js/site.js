@@ -59,8 +59,11 @@
   /* arriving from the end of the Goblet tour: the scroll that pulled this page in is usually still going
      (wheel notches, trackpad momentum). Swallow it, so the page opens at its top, and only respond to a
      fresh scroll that starts after a pause. Registered before Lenis so it sees the wheel first. */
-  var handoff = false;
-  try { handoff = sessionStorage.getItem("gx-handoff") === "1"; sessionStorage.removeItem("gx-handoff"); } catch (e) {}
+  var handoff = false, handoffY = 0;   // the tour hands over with the page already lifted this far
+  try {
+    var hv = sessionStorage.getItem("gx-handoff");
+    if (hv != null) { handoff = true; handoffY = Math.max(0, parseInt(hv, 10) || 0); sessionStorage.removeItem("gx-handoff"); }
+  } catch (e) {}
   if (handoff) {
     var hw = performance.now(), hEnd = hw + 700;
     var swallow = function (e) {
@@ -69,7 +72,7 @@
       window.removeEventListener("wheel", swallow, { capture: true });
     };
     window.addEventListener("wheel", swallow, { capture: true, passive: false });
-    window.scrollTo(0, 0);
+    window.scrollTo(0, handoffY);
   }
 
   var lenis = null;
@@ -88,7 +91,7 @@
 
   /* a project page opened fresh (a link, a tile, the end of the Goblet tour) starts at its top. Some hosts
      and previews carry over or restore the previous page's scroll position after load, which would drop
-     you mid-article; hold the top until you scroll yourself. Back/forward and reload keep their place,
+     you mid-article; hold the top (or, coming from the tour, the spot it handed over at) until you scroll yourself. Back/forward and reload keep their place,
      and #links still go to their section. */
   var navEntry = performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
   if (document.querySelector(".p-head") && !location.hash && (!navEntry || navEntry.type === "navigate")) {
@@ -97,7 +100,7 @@
     ["wheel", "touchstart", "keydown", "pointerdown"].forEach(function (ev) { window.addEventListener(ev, mine, { capture: true, passive: true }); });
     var holdTop = function () {
       if (moved || performance.now() > holdUntil) return;
-      if (window.scrollY !== 0) { if (lenis) lenis.scrollTo(0, { immediate: true, force: true }); else window.scrollTo(0, 0); }
+      if (Math.abs(window.scrollY - handoffY) > 0.5) { if (lenis) lenis.scrollTo(handoffY, { immediate: true, force: true }); else window.scrollTo(0, handoffY); }
       requestAnimationFrame(holdTop);
     };
     var startHold = function () { holdUntil = performance.now() + 1500; };

@@ -332,7 +332,7 @@
   if (!scroller || !tile || !Spring) return;
   var tbox = tile.querySelector(".tile-img"), timg = tbox.querySelector("img");
   var side = root.querySelector(".gx-side"), bar = sheet.querySelector(".gx-bar"), closeBtn = sheet.querySelector(".gx-close");
-  var track = scroller.querySelector(".gx-track") || root, nextEl = sheet.querySelector(".gx-next");
+  var track = scroller.querySelector(".gx-track") || root;
   var state = 0, geo = null, pushed = false;           // state: 0 closed, 1 open or opening, -1 closing
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function contain(r, w, h) {
@@ -412,45 +412,48 @@
       if (window.__lenis) window.__lenis.start();
     });
   }
-  // ---- the end: past the last part the Goblet page peeks up from the bottom like a sheet waiting underneath.
-  // Scrolling on from the very bottom pulls it up against resistance (rubber-banded, growing to full
-  // width while the tour dims back); keep going and it rises to fill the screen and opens.
-  // A gesture only counts once the scroll has come to rest at the bottom, so the scroll that arrives
-  // there (or a trackpad's momentum) never carries straight through.
-  var THRESH = 280, pull = 0, armed = false, lastWheel = 0, lastScroll = 0, leaving = false, relaxT = 0, ty0 = null, fetched = false;
+  // ---- the end: past the last part the tour runs straight into the Goblet page's opening screen (.gx-peek:
+  // the page's own header and first lines, laid out exactly as that page and one screen tall), so the bottom
+  // of the tour looks just like the top of the write-up, the site's nav included. A last scroll or two from
+  // the very bottom meets resistance (it lifts a little, rubber-banded); keep going and the real page takes
+  // over at the same spot, lift and all. Only a fresh scroll started at rest at the bottom counts, so the
+  // scroll that arrives there (or a trackpad's momentum) never carries straight through.
+  var endEl = scroller.querySelector(".gx-end"), peek = endEl && endEl.querySelector(".gx-peek");
+  var more = sheet.querySelector(".gx-more"), nextHref = more ? more.href : null, navClone = null;
+  var THRESH = 280, pull = 0, armed = false, lastWheel = 0, lastScroll = 0, leaving = false, relaxT = 0, ty0 = null, fetched = false, liftNow = 0;
   function atEnd() { return scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2; }
   function rubber(over, dim) { var c = 0.55; return (over * dim * c) / (dim + c * Math.abs(over)); }
+  // as the write-up's first screen comes up, the site nav settles in over it and the tour's own controls leave
+  function endUI() {
+    if (!endEl) return;
+    var e = clamp01(1 - endEl.getBoundingClientRect().top / scroller.clientHeight);
+    if (e > 0 && !navClone) {
+      var live = document.querySelector("header.nav");
+      if (live) {
+        navClone = live.cloneNode(true); navClone.classList.add("gx-navclone"); navClone.classList.remove("edge");
+        navClone.setAttribute("aria-hidden", "true"); navClone.inert = true; sheet.appendChild(navClone);
+      }
+    }
+    var nv = clamp01((e - 0.7) / 0.3);
+    if (navClone) navClone.style.opacity = nv.toFixed(3);
+    if (!sp.running) { bar.style.opacity = (1 - nv).toFixed(3); bar.style.visibility = nv > 0.99 ? "hidden" : ""; }
+  }
   var ps = new Spring(function (v) {
-    if (leaving || !nextEl) return;
-    var x = Math.max(0, v.x), prog = Math.min(1, x / THRESH), vhh = scroller.clientHeight;
-    var lift = Math.min(vhh * 0.14, rubber(x, vhh * 0.5));          // stays inside the strip it peeks from
-    nextEl.style.transform = x > 0.5 ? "translateY(" + (-lift).toFixed(1) + "px) scale(" + (0.965 + 0.035 * prog).toFixed(4) + ")" : "";
-    root.style.opacity = x > 0.5 ? (1 - 0.45 * prog).toFixed(3) : "";
+    var x = Math.max(0, v.x); liftNow = rubber(x, scroller.clientHeight * 0.5);
+    if (peek) peek.style.transform = liftNow > 0.3 ? "translateY(" + (-liftNow).toFixed(1) + "px)" : "";
+    if (navClone) navClone.classList.toggle("edge", liftNow > 1);           // as the real nav does once scrolled
   });
   function relax() { clearTimeout(relaxT); pull = 0; if (!leaving) ps.to({ x: 0 }, { damping: 1, response: 0.4 }); }
   function resetPull() {
     clearTimeout(relaxT); pull = 0; armed = false; ty0 = null; leaving = false;
-    sheet.classList.remove("leaving"); ps.set({ x: 0 });
-    if (nextEl) nextEl.removeAttribute("style");
+    ps.set({ x: 0 }); bar.style.visibility = ""; endUI();
   }
-  // commit: the card lifts out of its strip and grows to fill the screen, becoming the page it previews
-  var gs = new Spring(function (v) {
-    var p = v.p, q = 1 - p, r = gs.from, W0 = sheet.clientWidth, H0 = sheet.clientHeight;
-    nextEl.style.top = (r.top * q).toFixed(1) + "px"; nextEl.style.left = (r.left * q).toFixed(1) + "px";
-    nextEl.style.width = (r.width + (W0 - r.width) * p).toFixed(1) + "px"; nextEl.style.height = (r.height + (H0 - r.height) * p).toFixed(1) + "px";
-    nextEl.style.borderRadius = (26 * q).toFixed(1) + "px";
-  });
-  function go(v) {
-    if (leaving || !nextEl) return;
-    clearTimeout(relaxT); ps.stop();
-    var r = nextEl.getBoundingClientRect();
-    leaving = true; sheet.classList.add("leaving");
-    try { sessionStorage.setItem("gx-handoff", "1"); } catch (e) {}     // the page ignores this scroll's tail
-    gs.from = { top: r.top, left: r.left, width: r.width, height: r.height };
-    nextEl.style.cssText = "position:fixed;margin:0;right:auto;transform:none;z-index:5;transition:none";
-    gs.set({ p: 0 });
-    gs.to({ p: 1 }, { damping: 1, response: 0.42, velocity: { p: v || 0 } }, function () { location.href = nextEl.href; });
-    setTimeout(function () { location.href = nextEl.href; }, 900);                // never strand it mid-way
+  function go() {
+    if (leaving || !nextHref) return;
+    leaving = true; clearTimeout(relaxT); ps.stop();
+    // the page opens scrolled by the same lift, so nothing moves at the switch (and it ignores this scroll's tail)
+    try { sessionStorage.setItem("gx-handoff", String(Math.round(liftNow))); } catch (e) {}
+    location.href = nextHref;
   }
   function addPull(d) {
     if (leaving) return;
@@ -460,10 +463,11 @@
   }
   scroller.addEventListener("scroll", function () {
     lastScroll = performance.now();
+    endUI();
     if (!atEnd()) { armed = false; if (pull > 0) relax(); }
-    else if (!fetched && nextEl) {                       // warm the write-up so the hand-off is instant
+    else if (!fetched && nextHref) {                     // warm the write-up so the hand-off is instant
       fetched = true;
-      var l = document.createElement("link"); l.rel = "prefetch"; l.href = nextEl.href; document.head.appendChild(l);
+      var l = document.createElement("link"); l.rel = "prefetch"; l.href = nextHref; document.head.appendChild(l);
     }
   }, { passive: true });
   scroller.addEventListener("wheel", function (e) {
@@ -474,7 +478,7 @@
     if (!armed) { if (gap < 150 || d <= 0) return; armed = true; }   // a fresh scroll, started at rest
     if (d > 0) addPull(Math.min(d, 160)); else if (pull > 0) addPull(Math.max(d, -160));
   }, { passive: true });
-  var tTrack = { h: [], add: function (x, y) { var t = performance.now(); this.h.push([t, y]); while (this.h.length > 2 && t - this.h[0][0] > 100) this.h.shift(); },
+  var tTrack = { h: [], add: function (y) { var t = performance.now(); this.h.push([t, y]); while (this.h.length > 2 && t - this.h[0][0] > 100) this.h.shift(); },
     vel: function () { var h = this.h; if (h.length < 2) return 0; var a = h[0], b = h[h.length - 1], dt = (b[0] - a[0]) / 1000;
       return dt > 0 && performance.now() - b[0] < 80 ? (b[1] - a[1]) / dt : 0; } };
   scroller.addEventListener("touchstart", function (e) { ty0 = atEnd() ? e.touches[0].clientY : null; tTrack.h = []; }, { passive: true });
@@ -483,25 +487,21 @@
     var y = e.touches[0].clientY;
     if (ty0 == null) { if (atEnd()) ty0 = y; return; }
     pull = Math.max(0, (ty0 - y) * 1.6); clearTimeout(relaxT); ps.set({ x: pull });
-    tTrack.add(0, y);
+    tTrack.add(y);
   }, { passive: true });
   scroller.addEventListener("touchend", function () {
     if (ty0 == null) return; ty0 = null;
     var vy = tTrack.vel(); tTrack.h = [];
-    // a flick up commits early; the release velocity carries into the rise
-    if (pull >= THRESH || (pull > THRESH * 0.25 && vy < -500)) go(Math.min(4, -vy / 900)); else relax();
+    if (pull >= THRESH || (pull > THRESH * 0.25 && vy < -500)) go(); else relax();   // a flick up goes early
   }, { passive: true });
   document.addEventListener("keydown", function (e) {
     if (state !== 1 || !atEnd() || e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === " " && e.target.closest && e.target.closest("a, button")) return;
     if (/^(ArrowDown|PageDown|End| )$/.test(e.key)) { e.preventDefault(); addPull(e.key === "ArrowDown" ? 90 : 150); }
   });
-  if (nextEl) nextEl.addEventListener("click", function (e) {           // a click opens it the same way
-    if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    e.preventDefault(); go();
-  });
+  if (endEl) endEl.addEventListener("click", function () { if (state === 1) go(); });   // or just click it
   // coming back from the write-up (back button, page restored from cache): the tour is as it was
-  window.addEventListener("pageshow", function (e) { if (e.persisted && leaving) { gs.stop(); resetPull(); root.style.opacity = ""; } });
+  window.addEventListener("pageshow", function (e) { if (e.persisted && leaving) resetPull(); });
 
   // the browser's back button closes the tour; #goblet opens it
   function openNav() { open(); if (!pushed) { history.pushState({ gxTour: 1 }, "", "#goblet"); pushed = true; } }
