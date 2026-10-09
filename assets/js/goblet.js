@@ -349,7 +349,8 @@
     var sc = contain(sr, iw, ih), ir = contain(timg.getBoundingClientRect(), iw, ih);
     g.k = ir.width / sc.width;
     g.tx = ir.left - sr.left - g.k * (sc.left - sr.left); g.ty = ir.top - sr.top - g.k * (sc.top - sr.top);
-    g.box = b; g.rad = Math.max(0, (parseFloat(getComputedStyle(tile).borderTopLeftRadius) || 18) - 1);
+    var br = parseFloat(getComputedStyle(tile).borderTopLeftRadius);   // square tiles: 0, not a fallback
+    g.box = b; g.rad = Math.max(0, (isNaN(br) ? 18 : br) - 1);
     return g;
   }
   var sp = new Spring(function (v) {
