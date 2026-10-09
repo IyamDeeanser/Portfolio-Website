@@ -299,7 +299,7 @@ section { position: relative; }
 .fig b { display: block; font-size: clamp(1.9rem, 3vw, 2.6rem); font-weight: 500; letter-spacing: calc(var(--k) * -0.03em); line-height: 1.1; }
 .fig span { color: var(--text-3s); font-size: .875rem; }
 .gx { position: relative; }
-.port-head { margin-top: clamp(4rem, 9vw, 7rem); scroll-margin-top: 104px; }   /* "Skip to portfolio" lands clear of the nav */
+.port-head { scroll-margin-top: 104px; }   /* "Skip to portfolio" lands clear of the nav */
 .gx-pin {
   position: relative; max-width: var(--wide); margin-inline: auto; padding-inline: var(--gutter);
   display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(1.5rem, 4vw, 4.5rem);
@@ -356,6 +356,20 @@ section { position: relative; }
   .figs { gap: .2rem 1.6rem; }
 }
 
+/* the tour's sheet: fixed over the page, its own scroller, grown out of the Goblet tile (goblet.js drives
+   the clip and the engine's transform). Hidden, it still lays out, so it can be measured before it shows. */
+.gx-sheet { position: fixed; inset: 0; z-index: 70; background: var(--bg); visibility: hidden; pointer-events: none; }
+.gx-sheet.open { visibility: visible; pointer-events: auto; }
+.gx-sheet:not(.open) .gx-step { visibility: hidden !important; }   /* the shown step sets its own visibility */
+.gx-scroll { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.gx-scroll::-webkit-scrollbar { display: none; }
+.gx-sheet .gx-stage { transform-origin: 0 0; }
+.gx-bar { position: absolute; z-index: 3; top: 10px; right: var(--gutter); display: flex; align-items: center; gap: .6rem; }
+.gx-bar .pill { height: 40px; }
+.gx-close { background: rgb(255 255 255 / .06); }
+html.gx-open.lenis.lenis-stopped { overflow: visible; }   /* keep the page (and its scrollbar) exactly where the tile is */
+@media (max-width: 640px) { .gx-more { display: none; } }
+
 /* projects: bento with exact cells */
 .bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 16px; margin-top: 3rem; }
 .tile {
@@ -381,9 +395,27 @@ section { position: relative; }
 .tile.big { grid-column: span 2; grid-row: span 2; }
 .tile.big .tile-img { aspect-ratio: auto; flex: 1; min-height: 340px; }
 .tile.big h3 { font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: calc(var(--k) * -0.03em); }
-.tile.big .stats { display: flex; gap: 2.6rem; margin-top: .5rem; }
-.tile.big .stats b { display: block; font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 500; letter-spacing: calc(var(--k) * -0.035em); line-height: 1; color: var(--text); }
-.tile.big .stats span { font-size: .85rem; color: var(--text-3s); }
+.tile .stats { display: flex; gap: 2.6rem; margin-top: .5rem; }
+.tile .stats b { display: block; font-size: clamp(1.7rem, 2.6vw, 2.2rem); font-weight: 500; letter-spacing: calc(var(--k) * -0.035em); line-height: 1; color: var(--text); }
+.tile.big .stats b { font-size: clamp(2rem, 3.6vw, 3rem); }
+.tile .stats span { font-size: .85rem; color: var(--text-3s); }
+/* Goblet: the tile shows the tour's first frame, faded exactly as the tour draws it, so the engine can grow
+   straight into the tour when the tile opens it */
+.tile.tour .tile-img { position: relative; background: var(--bg); }
+.tile.tour .tile-img img {
+  position: absolute; top: 0; left: 50%; translate: -50% 0; height: 100%; width: auto; max-width: none;
+  -webkit-mask-image: linear-gradient(transparent, rgb(0 0 0 / .4) 13.5%, #000 30%, #000 94%, transparent), linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  -webkit-mask-composite: source-in; mask-image: linear-gradient(transparent, rgb(0 0 0 / .4) 13.5%, #000 30%, #000 94%, transparent), linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-composite: intersect;
+}
+.tour-cue {
+  position: absolute; left: 1.1rem; bottom: 1.1rem; z-index: 1; display: inline-flex; align-items: center; gap: .5rem;
+  height: 40px; padding: 0 1.05rem 0 .85rem; border-radius: 999px; font-size: .9375rem; font-weight: 500; color: var(--text);
+  background: rgb(255 255 255 / .08); border: 1px solid rgb(255 255 255 / .14); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  transition: background .25s, border-color .25s;
+}
+.tour-cue .i { width: 15px; height: 15px; color: var(--accent); }
+.tile.tour.opened .tile-img img, .tile.tour.opened .tour-cue { visibility: hidden; }
 .tile.wide { grid-column: span 2; }
 .tile.wide .tile-img { aspect-ratio: 21 / 9; }
 .tile.strip { grid-column: 1 / -1; flex-direction: row; }
@@ -393,11 +425,13 @@ section { position: relative; }
   .bento { grid-template-columns: 1fr 1fr; }
   .tile.big { grid-column: span 2; grid-row: auto; }
   .tile.wide, .tile.strip { grid-column: span 2; }
+  .tile.tour .tile-img { min-height: min(560px, 62vh); }
 }
 @media (max-width: 640px) {
   .bento { grid-template-columns: 1fr; }
   .tile.big, .tile.wide, .tile.strip { grid-column: auto; }
   .tile.big .tile-img { min-height: 240px; }
+  .tile.tour .tile-img { min-height: 400px; }
   .tile.strip { flex-direction: column; }
   .tile.strip .tile-img { width: auto; aspect-ratio: 16 / 10; }
 }
@@ -523,6 +557,7 @@ dialog.lb::backdrop { background: transparent; }
   .tile:hover { border-color: var(--line-2); }
   .tile:hover .tile-img img { transform: scale(1.035); }
   .tile:hover .go { color: var(--text); translate: 2px -2px; }
+  .tile.tour:hover .tour-cue { background: rgb(255 255 255 / .14); border-color: rgb(255 255 255 / .22); }
   .skx-item:hover .skx-name { color: var(--text); }
   .back:hover { color: var(--text); }
   .toc a:hover { color: var(--text); }

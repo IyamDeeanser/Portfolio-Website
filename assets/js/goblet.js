@@ -1,7 +1,12 @@
 /* Goblet tour: a pinned scene. Scrolling plays the rendered animation (or moves a camera over the
    still cutaway), resting on each stop; the part in focus gets a pointer and a leader line to its
    description. Config lives in the JSON inside the section (see README: "Goblet tour").
-   Rendered frames arrive in packs: JSON files of base64 WebP frames, desktop and phone sets. */
+   Rendered frames arrive in packs: JSON files of base64 AVIF/WebP frames, desktop and phone sets.
+
+   The tour lives in a full-screen sheet that grows out of the Goblet tile: the tile shows the tour's first
+   frame, so on open the sheet's clip expands from the tile's picture to the whole screen while the engine
+   glides and scales from the tile into its place in the tour. Closing runs it back, crossfading whatever
+   frame is showing to the first one on the way, so the engine lands back in the tile exactly. */
 (function () {
   "use strict";
   var root = document.querySelector(".gx");
@@ -14,6 +19,10 @@
   root.classList.add("gx-on");
 
   var stops = conf.stops, n = stops.length;
+  var sheet = root.closest(".gx-sheet"), scroller = sheet && sheet.querySelector(".gx-scroll");
+  var sLenis = null;                                    // the sheet's own smooth scrolling, while it's open
+  var home = 0, uiO = 1, leadO = 1;                                // closing: crossfade to the first frame; side UI opacity
+  function vh() { return scroller ? scroller.clientHeight : window.innerHeight; }
   var pin = root.querySelector(".gx-pin"), stage = root.querySelector(".gx-stage");
   var svg = root.querySelector(".gx-lead");
   var steps = root.querySelectorAll(".gx-step"), btns = root.querySelectorAll(".gx-index button");
@@ -156,8 +165,9 @@
   // ---- scroll: each stop rests for the first part of its stretch, then the scene travels on
   var HOLD = conf.hold || 0.5;
   function target() {
-    var r = root.getBoundingClientRect(), span = r.height - window.innerHeight;
-    var p = Math.min(1, Math.max(0, -r.top / Math.max(span, 1)));
+    var r = root.getBoundingClientRect(), span = r.height - vh();
+    var top0 = scroller ? scroller.getBoundingClientRect().top : 0;
+    var p = Math.min(1, Math.max(0, (top0 - r.top) / Math.max(span, 1)));
     var u = p * n, i = Math.min(Math.floor(u), n - 1), local = u - i;
     var f = i >= n - 1 ? 0 : Math.max(0, (local - HOLD) / (1 - HOLD));
     f = 0.5 * f + 0.5 * f * f * (3 - 2 * f);            // ease out of each stop and into the next
@@ -167,8 +177,9 @@
   var dpr = 1, W = 0, H = 0, sx = 0, sy = 0;
   function layout() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var sr = stage.getBoundingClientRect(), pr = pin.getBoundingClientRect();
-    W = sr.width; H = sr.height; sx = sr.left - pr.left; sy = sr.top - pr.top;
+    // offsets, not rects: the stage carries a transform while the sheet opens and closes
+    var pr = pin.getBoundingClientRect();
+    W = stage.offsetWidth; H = stage.offsetHeight; sx = stage.offsetLeft; sy = stage.offsetTop;
     canvas.width = Math.max(1, Math.round(W * dpr)); canvas.height = Math.max(1, Math.round(H * dpr));
     svg.setAttribute("viewBox", "0 0 " + pr.width + " " + pr.height);
   }
@@ -207,6 +218,10 @@
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(media, dx, dy, fw, fh);
       if (fr.b) { ctx.globalAlpha = fr.t; ctx.drawImage(fr.b, dx, dy, fw, fh); ctx.globalAlpha = 1; }
+      if (home > 0 && isFrame) {                         // on the way back into the tile
+        var h0 = nearest(0) || (ready(still) ? still : null);
+        if (h0 && h0 !== media) { ctx.globalAlpha = home; ctx.drawImage(h0, dx, dy, fw, fh); ctx.globalAlpha = 1; }
+      }
       if (isFrame) {
         // the render window ends at the top: let the engine sink into shadow there instead
         var ft = F.fadeTop || 0.3, fb = F.fadeBottom || 0.06;
@@ -238,7 +253,7 @@
       var cx = 0, cy = 0;
       pts.forEach(function (p) { cx += p[0]; cy += p[1]; }); cx /= pts.length; cy /= pts.length;
       var g = ctx.createRadialGradient(cx, cy, H * 0.09, cx, cy, H * 0.5);
-      g.addColorStop(0, rgba(0)); g.addColorStop(1, rgba(DIM * near));
+      g.addColorStop(0, rgba(0)); g.addColorStop(1, rgba(DIM * near * (1 - home)));
       ctx.globalCompositeOperation = "source-atop";
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
       ctx.globalCompositeOperation = "source-over";
@@ -260,7 +275,7 @@
       L.pl.style.strokeDasharray = len; L.pl.style.strokeDashoffset = len * (1 - near);
     });
     endDot.setAttribute("cx", ex); endDot.setAttribute("cy", ey); endDot.setAttribute("r", showLine ? 2.5 : 0);
-    svg.style.opacity = near;
+    svg.style.opacity = near * (1 - home) * leadO;
   }
 
   // the scene follows the scroll through two soft stages: a wheel notch never lurches it,
@@ -273,7 +288,7 @@
     if (reduce) { mid = cur = t; }
     else {
       // with smooth wheel scrolling the scroll itself already glides, so follow it more tightly
-      var a = 1 - Math.exp(-dt / (window.__lenis ? TAU * 0.55 : TAU));
+      var a = 1 - Math.exp(-dt / ((scroller ? sLenis : window.__lenis) ? TAU * 0.55 : TAU));
       mid += (t - mid) * a;
       cur += (mid - cur) * a;
     }
@@ -288,6 +303,11 @@
   btns.forEach(function (b) {
     b.addEventListener("click", function () {
       var k = +b.getAttribute("data-go");
+      if (scroller) {
+        var ys = (k + HOLD * 0.5) / n * (root.offsetHeight - vh());
+        if (sLenis) sLenis.scrollTo(ys, { duration: 1.4 }); else scroller.scrollTo({ top: ys, behavior: "smooth" });
+        return;
+      }
       var top = root.getBoundingClientRect().top + window.scrollY;
       var span = root.offsetHeight - window.innerHeight;
       var y = top + (k + HOLD * 0.5) / n * span;
@@ -297,11 +317,126 @@
   });
 
   var onScreen = false;
-  new IntersectionObserver(function (es) {
-    onScreen = es[0].isIntersecting;
-    if (onScreen) { load(); layout(); if (!primed) { primed = true; mid = cur = target(); } kick(); }
-  }, { rootMargin: "150% 0px" }).observe(root);
-  window.addEventListener("scroll", function () { if (onScreen) kick(); }, { passive: true });
+  if (!scroller) {
+    new IntersectionObserver(function (es) {
+      onScreen = es[0].isIntersecting;
+      if (onScreen) { load(); layout(); if (!primed) { primed = true; mid = cur = target(); } kick(); }
+    }, { rootMargin: "150% 0px" }).observe(root);
+  }
+  (scroller || window).addEventListener("scroll", function () { if (onScreen) kick(); }, { passive: true });
   new ResizeObserver(function () { layout(); kick(); }).observe(stage);
   narrow.addEventListener && narrow.addEventListener("change", function () { layout(); kick(); });
+
+  // ---- the sheet: open from the tile, close back into it
+  var tile = document.querySelector(".tile.tour"), Spring = window.__Spring;
+  if (!scroller || !tile || !Spring) return;
+  var tbox = tile.querySelector(".tile-img"), timg = tbox.querySelector("img");
+  var side = root.querySelector(".gx-side"), bar = sheet.querySelector(".gx-bar"), closeBtn = sheet.querySelector(".gx-close");
+  var state = 0, geo = null, pushed = false;           // state: 0 closed, 1 open or opening, -1 closing
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function contain(r, w, h) {
+    var s = Math.min(r.width / w, r.height / h), cw = w * s, ch = h * s;
+    return { left: r.left + (r.width - cw) / 2, top: r.top + (r.height - ch) / 2, width: cw, height: ch };
+  }
+  // where the engine sits in the tile and in the tour; the stage transform maps one onto the other
+  function measure() {
+    var g = { vw: sheet.clientWidth, vh: sheet.clientHeight };
+    var b = tbox.getBoundingClientRect();
+    if (!(b.width > 0 && b.bottom > 0 && b.top < g.vh)) { g.fade = true; return g; }   // tile off screen: just fade
+    var iw = F ? F.w : conf.still.w, ih = F ? F.h : conf.still.h, pr = pin.getBoundingClientRect();
+    var sr = { left: pr.left + stage.offsetLeft, top: pr.top + stage.offsetTop, width: stage.offsetWidth, height: stage.offsetHeight };
+    var sc = contain(sr, iw, ih), ir = contain(timg.getBoundingClientRect(), iw, ih);
+    g.k = ir.width / sc.width;
+    g.tx = ir.left - sr.left - g.k * (sc.left - sr.left); g.ty = ir.top - sr.top - g.k * (sc.top - sr.top);
+    g.box = b; g.rad = Math.max(0, (parseFloat(getComputedStyle(tile).borderTopLeftRadius) || 18) - 1);
+    return g;
+  }
+  var sp = new Spring(function (v) {
+    var p = v.p, q = 1 - p, g = geo;
+    if (!g) return;
+    if (g.fade) { sheet.style.opacity = clamp01(p); stage.style.transform = "scale(" + (1 - 0.04 * q) + ")"; }
+    else {
+      var b = g.box, r = g.rad * q, cq = Math.max(0, q);
+      sheet.style.clipPath = "inset(" + b.top * cq + "px " + (g.vw - b.right) * cq + "px " + (g.vh - b.bottom) * cq + "px " + b.left * cq + "px round " + r + "px " + r + "px 0 0)";
+      stage.style.transform = "translate(" + g.tx * q + "px," + g.ty * q + "px) scale(" + (1 + (g.k - 1) * q) + ")";
+    }
+    uiO = clamp01((p - 0.5) / 0.5);                      // the text and controls come in over the second half
+    side.style.opacity = uiO; bar.style.opacity = uiO;
+    leadO = state < 0 ? clamp01((p - 0.8) / 0.2) : uiO;   // leader lines aren't on the moving stage: let them go first
+    if (state < 0) home = clamp01(q / 0.6);
+    draw();
+  });
+  function setInert(on) {
+    [].forEach.call(document.body.children, function (el) { if (el !== sheet && el.tagName !== "SCRIPT") el.inert = on; });
+  }
+  function settle() {
+    sheet.style.clipPath = sheet.style.opacity = stage.style.transform = side.style.opacity = bar.style.opacity = "";
+    uiO = leadO = 1;
+  }
+  function open() {
+    if (state === 1) return;
+    load();
+    var resume = state === -1;
+    state = 1; home = 0;
+    if (!resume) {
+      sheet.classList.add("open");
+      scroller.scrollTop = 0; layout(); mid = cur = 0; primed = true;
+      geo = measure(); sp.set({ p: 0 });
+    }
+    tile.classList.add("opened");
+    document.documentElement.classList.add("gx-open");
+    if (window.__lenis) window.__lenis.stop();
+    setInert(true); onScreen = true;
+    if (window.Lenis && !sLenis) {
+      try {
+        sLenis = new window.Lenis({ wrapper: scroller, content: root, duration: 0.9, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          wheelMultiplier: 1, touchMultiplier: 1.4, anchors: false, autoRaf: true, respectReducedMotion: false });
+      } catch (e) { sLenis = null; }
+    }
+    sp.to({ p: 1 }, { damping: 1, response: 0.55 }, settle);
+    try { closeBtn.focus({ preventScroll: true }); } catch (e) {}
+  }
+  function close() {
+    if (state !== 1) return;
+    state = -1;
+    geo = measure();
+    setInert(false);
+    try { tile.focus({ preventScroll: true }); } catch (e) {}
+    sp.to({ p: 0 }, { damping: 1, response: 0.45 }, function () {
+      state = 0; settle();
+      sheet.classList.remove("open"); tile.classList.remove("opened");
+      if (sLenis) { sLenis.destroy(); sLenis = null; }
+      scroller.scrollTop = 0; mid = cur = 0; home = 0; onScreen = false; setActive(0);
+      document.documentElement.classList.remove("gx-open");
+      if (window.__lenis) window.__lenis.start();
+    });
+  }
+  // the browser's back button closes the tour; #goblet opens it
+  function openNav() { open(); if (!pushed) { history.pushState({ gxTour: 1 }, "", "#goblet"); pushed = true; } }
+  function closeNav() {
+    if (pushed && history.state && history.state.gxTour) history.back();
+    else { close(); pushed = false; history.replaceState(null, "", location.pathname + location.search); }
+  }
+  window.addEventListener("popstate", function (e) {
+    if (e.state && e.state.gxTour) { pushed = true; open(); }
+    else if (state === 1) { pushed = false; close(); }
+  });
+  tile.addEventListener("click", function (e) {
+    if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // new tab: the Goblet page
+    e.preventDefault(); openNav();
+  });
+  tile.addEventListener("pointerenter", load); tile.addEventListener("focus", load);
+  closeBtn.addEventListener("click", closeNav);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && state === 1) { e.preventDefault(); closeNav(); } });
+  window.addEventListener("resize", function () { if (state === 1 && !sp.running) layout(); });
+  // a link to #goblet (on load, or followed on this page) opens the tour from the tile
+  function deepLink() {
+    if (location.hash !== "#goblet" || state === 1) return;
+    history.replaceState(null, "", location.pathname + location.search); pushed = false;
+    if (window.__lenis) window.__lenis.scrollTo(tile, { offset: -(innerHeight - tile.offsetHeight) / 2, immediate: true });
+    else tile.scrollIntoView({ block: "center" });
+    requestAnimationFrame(function () { requestAnimationFrame(openNav); });
+  }
+  window.addEventListener("hashchange", deepLink);
+  deepLink();
 })();

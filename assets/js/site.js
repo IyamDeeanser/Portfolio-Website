@@ -39,6 +39,7 @@
     };
     this.raf = requestAnimationFrame(tick);
   };
+  window.__Spring = Spring;                                           // shared with the Goblet tour
   // soft edge: the further past a boundary you pull, the less it follows (Apple's rubber-band constant)
   function rubber(over, dim) { var c = 0.55; return (over * dim * c) / (dim + c * Math.abs(over)); }
   // where a flick would come to rest, like scroll deceleration (rate .998 per ms)

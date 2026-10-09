@@ -31,7 +31,7 @@ If you change the engine image, update `EXIT` at the top of `assets/js/plume.js`
 
 ## Goblet tour (front page)
 
-The Goblet section is a pinned scene: as you scroll, your render plays from part to part, resting on each one, while a pointer and a line connect the part to its description. It is built by `assets/js/goblet.js`, and everything it needs is in the JSON inside `<script class="gx-config">` in `index.html`. The text for each stop is the `<article class="gx-step">` list just above it.
+The Goblet tour opens from the big Goblet tile in Portfolio. The tile shows the tour's first frame (`assets/goblet/poster.webp`); clicking it grows the tile into a full-screen sheet while the engine glides into place, and closing (the X, Esc or the browser's back button) shrinks it back into the tile. A link to `index.html#goblet` opens it directly. Without JavaScript, or with a modifier-click, the tile is a plain link to the Goblet page. Inside the sheet the tour is a pinned scene: as you scroll, your render plays from part to part, resting on each one, while a pointer and a line connect the part to its description. It is built by `assets/js/goblet.js`, and everything it needs is in the JSON inside `<script class="gx-config">` in `index.html`. The text for each stop is the `<article class="gx-step">` list just above it.
 
 Each stop has:
 - `frame`: the frame of the render the stop rests on.
@@ -53,7 +53,7 @@ The frames live in `assets/goblet/`:
 
 Loading is tuned for the first impression:
 - AVIF is well under half the size of WebP at the same look: about 11 MB for desktop and 3 MB for phones, gzipped in transfer.
-- The packs start downloading in the background about 2.5 s after the page loads (after the hero ignites), so they are usually all in before anyone scrolls to the tour. With data saver on or on a 2G/3G connection, they wait until the tour is near.
+- The packs start downloading in the background about 2.5 s after the page loads (after the hero ignites), so they are usually all in before anyone opens the tour. With data saver on or on a 2G/3G connection, they start when the pointer reaches the Goblet tile or the tour opens.
 - Packs are ordered coarse to fine: every 8th frame first, then the frames halfway between, and so on. Until the full 60 fps arrives the tour shows the nearest frame that has loaded.
 - Unpacking (JSON and base64 to images) runs in a background worker, so it never stalls scrolling.
 
