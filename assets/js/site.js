@@ -86,6 +86,25 @@
     } catch (e) { lenis = null; }
   }
 
+  /* a project page opened fresh (a link, a tile, the end of the Goblet tour) starts at its top. Some hosts
+     and previews carry over or restore the previous page's scroll position after load, which would drop
+     you mid-article; hold the top until you scroll yourself. Back/forward and reload keep their place,
+     and #links still go to their section. */
+  var navEntry = performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+  if (document.querySelector(".p-head") && !location.hash && (!navEntry || navEntry.type === "navigate")) {
+    var moved = false, holdUntil = Infinity;
+    var mine = function () { moved = true; };
+    ["wheel", "touchstart", "keydown", "pointerdown"].forEach(function (ev) { window.addEventListener(ev, mine, { capture: true, passive: true }); });
+    var holdTop = function () {
+      if (moved || performance.now() > holdUntil) return;
+      if (window.scrollY !== 0) { if (lenis) lenis.scrollTo(0, { immediate: true, force: true }); else window.scrollTo(0, 0); }
+      requestAnimationFrame(holdTop);
+    };
+    var startHold = function () { holdUntil = performance.now() + 1500; };
+    if (document.readyState === "complete") startHold(); else window.addEventListener("load", startHold);
+    requestAnimationFrame(holdTop);
+  }
+
   /* nav hairline once the page leaves the very top */
   var nav = document.querySelector(".nav"), top = document.getElementById("top-sentinel");
   if (nav && top && IO) new IntersectionObserver(function (e) { nav.classList.toggle("edge", !e[0].isIntersecting); }).observe(top);
