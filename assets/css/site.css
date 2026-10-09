@@ -357,6 +357,32 @@ section { position: relative; }
   .figs { gap: .2rem 1.6rem; }
 }
 
+/* where-am-I rail (desktop): a tick per section down the left edge. The current one is longer, in the
+   accent, and named; hovering the rail names them all. Fades in once the hero has scrolled away (site.js). */
+.loc { display: none; }
+@media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
+  .loc {
+    position: fixed; z-index: 30; left: clamp(14px, 1.6vw, 26px); top: 50%; display: grid; gap: .2rem;
+    opacity: 0; transform: translate(-8px, -50%); pointer-events: none; transition: opacity .5s var(--ease), transform .6s var(--ease);
+  }
+  .loc.show { opacity: 1; transform: translate(0, -50%); pointer-events: auto; }
+  html.gx-open .loc { opacity: 0; pointer-events: none; }
+  .loc a { display: flex; align-items: center; gap: .5rem; height: 24px; text-decoration: none; color: var(--text-3s); font-size: .75rem; letter-spacing: .01em; }
+  .loc i { flex: none; width: 12px; height: 2px; border-radius: 2px; background: var(--text-3); transition: width .45s var(--ease), background .3s; }
+  .loc span {
+    padding: .1rem .45rem; border-radius: 6px; background: rgb(10 11 13 / .72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    white-space: nowrap; opacity: 0; transform: translateX(-4px); transition: opacity .3s, transform .45s var(--ease), color .3s;
+  }
+  .loc a.on i { width: 26px; background: var(--accent); }
+  .loc a:not(.on):hover i { width: 18px; background: var(--text-2); }
+  .loc:hover span { opacity: .85; transform: none; }
+  .loc a.on span { color: var(--text); }
+  .loc a:hover span { color: var(--text); opacity: 1; }   /* narrower screens: named on hover only, so it never sits over content */
+}
+@media (min-width: 1440px) and (hover: hover) and (pointer: fine) {
+  .loc a.on span { opacity: 1; transform: none; }          /* room beside the content: the current one is always named */
+}
+
 /* the tour's sheet: fixed over the page, its own scroller, grown out of the Goblet tile (goblet.js drives
    the clip and the engine's transform). Hidden, it still lays out, so it can be measured before it shows. */
 .gx-sheet { position: fixed; inset: 0; z-index: 70; background: var(--bg); visibility: hidden; pointer-events: none; }

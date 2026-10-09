@@ -112,6 +112,27 @@
   var nav = document.querySelector(".nav"), top = document.getElementById("top-sentinel");
   if (nav && top && IO) new IntersectionObserver(function (e) { nav.classList.toggle("edge", !e[0].isIntersecting); }).observe(top);
 
+  /* where-am-I rail on the left (desktop): shows once the hero has mostly scrolled away; the current
+     section is the last one whose top has passed 35% of the way down (the same rule as the nav), and at
+     the very bottom of the page the last section counts even if it is too short to get there. */
+  var loc = document.querySelector(".loc");
+  if (loc) {
+    var locLinks = Array.prototype.slice.call(loc.querySelectorAll("a[data-loc]"));
+    var locSecs = locLinks.map(function (a) { return document.getElementById(a.getAttribute("data-loc")); });
+    var heroEl = document.querySelector(".hero"), locTick = 0;
+    var locUpdate = function () {
+      locTick = 0;
+      loc.classList.toggle("show", !heroEl || heroEl.getBoundingClientRect().bottom < innerHeight * 0.45);
+      var line = innerHeight * 0.35, id = "";
+      locSecs.forEach(function (el) { if (el && el.getBoundingClientRect().top <= line) id = el.id; });
+      if (innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4 && locSecs[locSecs.length - 1]) id = locSecs[locSecs.length - 1].id;
+      locLinks.forEach(function (a) { a.classList.toggle("on", a.getAttribute("data-loc") === id); });
+    };
+    window.addEventListener("scroll", function () { if (!locTick) locTick = requestAnimationFrame(locUpdate); }, { passive: true });
+    window.addEventListener("resize", locUpdate);
+    locUpdate();
+  }
+
   /* where am I: the nav link for the section you are reading lights up, and a bar slides under it.
      A section counts as current once its top passes 35% of the way down the screen. On project pages
      Portfolio is always current. On phones the link row scrolls itself to keep the current one in view. */
