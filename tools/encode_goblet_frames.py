@@ -1,12 +1,13 @@
 """Turn the Goblet scroll render into the frame packs the front page uses.
 
-    python3 tools/encode_goblet_frames.py "Goblet_Scroll_Animation_60fps_For_Website.mp4"
+    python3 tools/encode_goblet_frames.py "Goblet_Scroll_Animation_60fps_For_Website.mp4" [--white]
 
 Needs ffmpeg, Pillow and numpy. Writes assets/goblet/{d-*.json, m-*.json, w-*.json, poster.webp} and prints the
 "frames" block for the gx-config JSON in index.html (paste it there if the pack layout changed).
 
 The render is 1080x1920 at 60 fps with the scene in a 1080x1348 band (rows 286..1634); pure black around
-it is lifted to the page colour. Three sets:
+it is lifted to the page colour. With --white (the light edition) the black background is keyed out and
+replaced with white instead (see key_white below). Three sets:
   d-*.json  desktop, every frame, 864x1080 AVIF
   m-*.json  phones, every 2nd frame, 518x648 AVIF
   w-*.json  fallback for browsers without AVIF, every 2nd frame, 518x648 WebP
@@ -20,8 +21,10 @@ takes back the base64 overhead in transfer.
 import base64, io, json, os, subprocess, sys, tempfile
 from PIL import Image
 import numpy as np
+from scipy import ndimage as ndi
 
 VIDEO = sys.argv[1]
+WHITE = "--white" in sys.argv
 OUT = os.path.join(os.path.dirname(__file__), "..", "assets", "goblet")
 CROP = (0, 286, 1080, 1634)          # the render band inside the 1080x1920 frame
 BG = np.array([10, 11, 13], float)   # page colour: pure black is lifted to this
@@ -34,10 +37,30 @@ subprocess.run(["ffmpeg", "-v", "error", "-i", VIDEO, "-vsync", "0", "-start_num
 COUNT = len([f for f in os.listdir(tmp) if f.startswith("f_")])
 
 
+def key_white(a):
+    """The render on white instead of black. The background is pure black (plus a little codec noise): black
+    regions connected to the frame edge are background, and so are pure-black gaps seen through the structure,
+    eased in by size (small dark pockets in the cutaways are recesses and stay dark; a gap fades from dark to
+    white as it grows, so nothing flickers as the camera moves). A slightly feathered matte keeps edges clean."""
+    mxs = ndi.gaussian_filter(a.max(2), 1.2)
+    dark = ndi.binary_closing(mxs <= 7, iterations=2, border_value=1)
+    lab, n = ndi.label(dark)
+    edge = np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]])); edge = edge[edge > 0]
+    sizes = np.asarray(ndi.sum(dark, lab, range(1, n + 1)))
+    t = np.clip((sizes - 800) / 1700.0, 0, 1); w = t * t * (3 - 2 * t)
+    w[edge - 1] = 1.0
+    weight = np.concatenate([[0.0], w])[lab]
+    bg = ndi.binary_opening(weight > 0.5, iterations=1, border_value=1)
+    m = ndi.gaussian_filter(np.where(bg, np.maximum(weight, 0.5), weight * (weight <= 0.5)).astype(np.float32), 0.9)
+    m = np.maximum(m, np.where(bg, weight, 0))
+    return a + (255.0 - a) * np.clip(m, 0, 1)[..., None]
+
+
 def frame(i, size, q, fmt="WEBP"):
     im = Image.open(f"{tmp}/f_{i:04d}.png").convert("RGB").crop(CROP)
     a = np.asarray(im).astype(float)
-    im = Image.fromarray(np.clip(a + BG * (1 - a / 255.0) + 0.5, 0, 255).astype(np.uint8))
+    out = key_white(a) if WHITE else a + BG * (1 - a / 255.0)
+    im = Image.fromarray(np.clip(out + 0.5, 0, 255).astype(np.uint8))
     im = im.resize(size, Image.LANCZOS)
     b = io.BytesIO()
     if fmt == "AVIF": im.save(b, "AVIF", quality=q, speed=5)

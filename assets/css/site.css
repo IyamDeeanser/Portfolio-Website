@@ -28,13 +28,14 @@
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   /* z scale: test-stand window layers 0-3, locator 30, nav 40, lightbox 60, tour 70 */
 }
-/* dark islands: the tour viewer keeps the night palette its render was made for */
-.gx-sheet, .tile.tour .tile-img, .hero {
+/* dark island: the test-stand window keeps the night palette the flame needs */
+.hero {
   --bg: #0a0b0d; --bg-2: #121316; --bg-3: #191b1f; --line: #24272c; --line-2: #33373e;
   --text: #ededeb; --text-2: #a7aab1; --text-3: #767a82; --text-3s: #8e939b; --accent: #f0703a; --accent-ink: #120a06;
   color: var(--text);   /* inherited text colour is resolved where it is set, so restate it in the island */
 }
-/* ...except where the tour hands over to the write-up, which is the light page again */
+/* the Goblet render is on white (its frames are keyed onto white), so the tour viewer is a white sheet */
+.gx-sheet { background: #fff !important; }
 .gx-sheet .gx-end, .gx-sheet .gx-navclone {
   --bg: #f2f3f4; --bg-2: #ffffff; --bg-3: #e7e9eb; --line: #d6d9dd; --line-2: #aeb3ba;
   --text: #0c0d0f; --text-2: #464a51; --text-3: #80858d; --text-3s: #6b7078; --accent: #e2531d; --accent-ink: #ffffff;
@@ -375,7 +376,7 @@ section { position: relative; }
 .gx-sheet .gx-stage { transform-origin: 0 0; }
 .gx-bar { position: absolute; z-index: 3; top: 10px; right: var(--gutter); display: flex; align-items: center; gap: .6rem; }
 .gx-bar .pill { height: 40px; }
-.gx-close { background: rgb(255 255 255 / .06); }
+.gx-close { background: #fff; }
 html.gx-open.lenis.lenis-stopped { overflow: visible; }
 /* the end of the tour runs straight into the Goblet page's opening screen, laid out exactly as that page
    (one screen tall, so at the bottom it sits where the real page starts); goblet.js lifts it against a little
@@ -417,7 +418,7 @@ html.gx-open.lenis.lenis-stopped { overflow: visible; }
 .tile .stats span { font-size: .85rem; color: var(--text-3s); }
 /* Goblet: the tile shows the tour's first frame, faded exactly as the tour draws it, so the engine can grow
    straight into the tour when the tile opens it */
-.tile.tour .tile-img { position: relative; background: var(--bg); }
+.tile.tour .tile-img { position: relative; background: #fff; }
 .tile.tour .tile-img img {
   position: absolute; top: 0; left: 50%; translate: -50% 0; height: 100%; width: auto; max-width: none;
   -webkit-mask-image: linear-gradient(transparent, rgb(0 0 0 / .4) 13.5%, #000 30%, #000 94%, transparent), linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
@@ -426,8 +427,8 @@ html.gx-open.lenis.lenis-stopped { overflow: visible; }
 }
 .tour-cue {
   position: absolute; left: 1.1rem; bottom: 1.1rem; z-index: 1; display: inline-flex; align-items: center; gap: .5rem;
-  height: 42px; padding: 0 1.05rem 0 .85rem; font-size: .9375rem; font-weight: 500; color: #0c0d0f;
-  background: #fff; border: 1px solid #fff; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  height: 42px; padding: 0 1.05rem 0 .85rem; font-size: .9375rem; font-weight: 500; color: #fff;
+  background: #0c0d0f; border: 1px solid #0c0d0f; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   transition: background .25s, border-color .25s;
 }
 .tour-cue .i { width: 15px; height: 15px; color: #e2531d; }
