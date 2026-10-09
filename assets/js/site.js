@@ -56,6 +56,22 @@
 
   /* smooth, weighted wheel scrolling everywhere (Lenis). Touch and keyboard scrolling stay native, nested
      scrollers (the experience rail) keep their own gestures, and in-page links glide to their target. */
+  /* arriving from the end of the Goblet tour: the scroll that pulled this page in is usually still going
+     (wheel notches, trackpad momentum). Swallow it, so the page opens at its top, and only respond to a
+     fresh scroll that starts after a pause. Registered before Lenis so it sees the wheel first. */
+  var handoff = false;
+  try { handoff = sessionStorage.getItem("gx-handoff") === "1"; sessionStorage.removeItem("gx-handoff"); } catch (e) {}
+  if (handoff) {
+    var hw = performance.now(), hEnd = hw + 700;
+    var swallow = function (e) {
+      var now = performance.now(), gap = now - hw; hw = now;
+      if (now < hEnd || gap < 220) { if (e.cancelable) e.preventDefault(); e.stopImmediatePropagation(); return; }
+      window.removeEventListener("wheel", swallow, { capture: true });
+    };
+    window.addEventListener("wheel", swallow, { capture: true, passive: false });
+    window.scrollTo(0, 0);
+  }
+
   var lenis = null;
   if (window.Lenis) {
     try {

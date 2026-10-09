@@ -445,6 +445,7 @@
     clearTimeout(relaxT); ps.stop();
     var r = nextEl.getBoundingClientRect();
     leaving = true; sheet.classList.add("leaving");
+    try { sessionStorage.setItem("gx-handoff", "1"); } catch (e) {}     // the page ignores this scroll's tail
     gs.from = { top: r.top, left: r.left, width: r.width, height: r.height };
     nextEl.style.cssText = "position:fixed;margin:0;right:auto;transform:none;z-index:5;transition:none";
     gs.set({ p: 0 });
