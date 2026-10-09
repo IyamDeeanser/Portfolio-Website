@@ -176,6 +176,17 @@
   var cur = 0, active = -1, raf = 0, last = 0, primed = false;
   function setActive(k) {
     if (k === active) return;
+    // direction of travel: moving down the tour, the old text rises away and the new one comes up from
+    // below; moving back up, the reverse. The incoming step is parked on its entry side before it shows.
+    var down = active < 0 || k > active;
+    var inc = steps[k];
+    if (inc && !inc.classList.contains("on")) {
+      inc.style.transition = "none";
+      inc.style.setProperty("--off", down ? "16px" : "-16px");
+      inc.offsetWidth;                                    // commit the parked position before animating
+      inc.style.transition = "";
+    }
+    steps.forEach(function (s, j) { if (j !== k) s.style.setProperty("--off", down ? "-16px" : "16px"); });
     active = k;
     steps.forEach(function (s, j) { s.classList.toggle("on", j === k); });
     btns.forEach(function (b, j) { if (j === k) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
