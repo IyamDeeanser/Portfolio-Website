@@ -412,29 +412,44 @@
       if (window.__lenis) window.__lenis.start();
     });
   }
-  // ---- the end: past the last part the write-up comes up next. Scrolling on from the very bottom meets
-  // resistance (the page lifts a little and a bar fills); keep going and it opens the write-up.
+  // ---- the end: past the last part the Goblet page peeks up from the bottom like a sheet waiting underneath.
+  // Scrolling on from the very bottom pulls it up against resistance (rubber-banded, growing to full
+  // width while the tour dims back); keep going and it rises to fill the screen and opens.
   // A gesture only counts once the scroll has come to rest at the bottom, so the scroll that arrives
   // there (or a trackpad's momentum) never carries straight through.
   var THRESH = 280, pull = 0, armed = false, lastWheel = 0, lastScroll = 0, leaving = false, relaxT = 0, ty0 = null, fetched = false;
   function atEnd() { return scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2; }
+  function rubber(over, dim) { var c = 0.55; return (over * dim * c) / (dim + c * Math.abs(over)); }
   var ps = new Spring(function (v) {
-    var x = Math.max(0, v.x), lift = 110 * (1 - Math.exp(-x / 170));
-    if (!leaving) track.style.transform = x > 0.5 ? "translateY(" + (-lift).toFixed(1) + "px)" : "";
-    if (nextEl) nextEl.style.setProperty("--pull", Math.min(1, x / THRESH).toFixed(3));
+    if (leaving || !nextEl) return;
+    var x = Math.max(0, v.x), prog = Math.min(1, x / THRESH), vhh = scroller.clientHeight;
+    var lift = Math.min(vhh * 0.14, rubber(x, vhh * 0.5));          // stays inside the strip it peeks from
+    nextEl.style.transform = x > 0.5 ? "translateY(" + (-lift).toFixed(1) + "px) scale(" + (0.965 + 0.035 * prog).toFixed(4) + ")" : "";
+    root.style.opacity = x > 0.5 ? (1 - 0.45 * prog).toFixed(3) : "";
   });
   function relax() { clearTimeout(relaxT); pull = 0; if (!leaving) ps.to({ x: 0 }, { damping: 1, response: 0.4 }); }
   function resetPull() {
     clearTimeout(relaxT); pull = 0; armed = false; ty0 = null; leaving = false;
     sheet.classList.remove("leaving"); ps.set({ x: 0 });
+    if (nextEl) nextEl.removeAttribute("style");
   }
-  function go() {
+  // commit: the card lifts out of its strip and grows to fill the screen, becoming the page it previews
+  var gs = new Spring(function (v) {
+    var p = v.p, q = 1 - p, r = gs.from, W0 = sheet.clientWidth, H0 = sheet.clientHeight;
+    nextEl.style.top = (r.top * q).toFixed(1) + "px"; nextEl.style.left = (r.left * q).toFixed(1) + "px";
+    nextEl.style.width = (r.width + (W0 - r.width) * p).toFixed(1) + "px"; nextEl.style.height = (r.height + (H0 - r.height) * p).toFixed(1) + "px";
+    nextEl.style.borderRadius = (26 * q).toFixed(1) + "px";
+  });
+  function go(v) {
     if (leaving || !nextEl) return;
-    leaving = true; clearTimeout(relaxT); ps.stop();
-    if (nextEl) nextEl.style.setProperty("--pull", 1);
-    sheet.classList.add("leaving"); track.offsetWidth;
-    track.style.transform = "translateY(-28vh)";
-    setTimeout(function () { location.href = nextEl.href; }, 380);
+    clearTimeout(relaxT); ps.stop();
+    var r = nextEl.getBoundingClientRect();
+    leaving = true; sheet.classList.add("leaving");
+    gs.from = { top: r.top, left: r.left, width: r.width, height: r.height };
+    nextEl.style.cssText = "position:fixed;margin:0;right:auto;transform:none;z-index:5;transition:none";
+    gs.set({ p: 0 });
+    gs.to({ p: 1 }, { damping: 1, response: 0.42, velocity: { p: v || 0 } }, function () { location.href = nextEl.href; });
+    setTimeout(function () { location.href = nextEl.href; }, 900);                // never strand it mid-way
   }
   function addPull(d) {
     if (leaving) return;
@@ -458,24 +473,34 @@
     if (!armed) { if (gap < 150 || d <= 0) return; armed = true; }   // a fresh scroll, started at rest
     if (d > 0) addPull(Math.min(d, 160)); else if (pull > 0) addPull(Math.max(d, -160));
   }, { passive: true });
-  scroller.addEventListener("touchstart", function (e) { ty0 = atEnd() ? e.touches[0].clientY : null; }, { passive: true });
+  var tTrack = { h: [], add: function (x, y) { var t = performance.now(); this.h.push([t, y]); while (this.h.length > 2 && t - this.h[0][0] > 100) this.h.shift(); },
+    vel: function () { var h = this.h; if (h.length < 2) return 0; var a = h[0], b = h[h.length - 1], dt = (b[0] - a[0]) / 1000;
+      return dt > 0 && performance.now() - b[0] < 80 ? (b[1] - a[1]) / dt : 0; } };
+  scroller.addEventListener("touchstart", function (e) { ty0 = atEnd() ? e.touches[0].clientY : null; tTrack.h = []; }, { passive: true });
   scroller.addEventListener("touchmove", function (e) {
     if (state !== 1 || leaving) return;
     var y = e.touches[0].clientY;
     if (ty0 == null) { if (atEnd()) ty0 = y; return; }
     pull = Math.max(0, (ty0 - y) * 1.6); clearTimeout(relaxT); ps.set({ x: pull });
+    tTrack.add(0, y);
   }, { passive: true });
   scroller.addEventListener("touchend", function () {
     if (ty0 == null) return; ty0 = null;
-    if (pull >= THRESH) go(); else relax();
+    var vy = tTrack.vel(); tTrack.h = [];
+    // a flick up commits early; the release velocity carries into the rise
+    if (pull >= THRESH || (pull > THRESH * 0.25 && vy < -500)) go(Math.min(4, -vy / 900)); else relax();
   }, { passive: true });
   document.addEventListener("keydown", function (e) {
     if (state !== 1 || !atEnd() || e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.key === " " && e.target.closest && e.target.closest("a, button")) return;
     if (/^(ArrowDown|PageDown|End| )$/.test(e.key)) { e.preventDefault(); addPull(e.key === "ArrowDown" ? 90 : 150); }
   });
+  if (nextEl) nextEl.addEventListener("click", function (e) {           // a click opens it the same way
+    if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault(); go();
+  });
   // coming back from the write-up (back button, page restored from cache): the tour is as it was
-  window.addEventListener("pageshow", function (e) { if (e.persisted && leaving) { resetPull(); track.style.transform = ""; } });
+  window.addEventListener("pageshow", function (e) { if (e.persisted && leaving) { gs.stop(); resetPull(); root.style.opacity = ""; } });
 
   // the browser's back button closes the tour; #goblet opens it
   function openNav() { open(); if (!pushed) { history.pushState({ gxTour: 1 }, "", "#goblet"); pushed = true; } }

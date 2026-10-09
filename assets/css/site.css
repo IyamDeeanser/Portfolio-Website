@@ -368,14 +368,25 @@ section { position: relative; }
 .gx-bar .pill { height: 40px; }
 .gx-close { background: rgb(255 255 255 / .06); }
 html.gx-open.lenis.lenis-stopped { overflow: visible; }
-/* the end of the tour: the write-up comes up next, and scrolling on into it opens it */
-.gx-end { height: 62vh; height: 62svh; display: grid; place-items: center; padding: 0 var(--gutter) env(safe-area-inset-bottom, 0px); }
-.gx-next { display: grid; justify-items: center; gap: .8rem; text-align: center; text-decoration: none; color: var(--text); }
-.gx-next b { font-size: clamp(2rem, 4.6vw, 3.6rem); font-weight: 600; letter-spacing: calc(var(--k) * -0.035em); line-height: 1.05; text-wrap: balance; }
-.gx-next-hint { font-size: .875rem; color: var(--text-3s); }
-.gx-next-bar { width: 148px; height: 3px; margin-top: .3rem; border-radius: 3px; background: var(--line-2); overflow: hidden; }
-.gx-next-bar i { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(var(--pull, 0)); }
-.gx-sheet.leaving .gx-track { opacity: 0; transition: transform .42s var(--ease), opacity .32s ease-in; }   /* keep the page (and its scrollbar) exactly where the tile is */
+/* the end of the tour: the Goblet page waits underneath like a sheet, its top peeking up from the bottom
+   edge with a grabber. Scrolling on pulls it up against resistance (goblet.js), and it opens. */
+.gx-end { position: relative; height: 55vh; height: 55svh; overflow: clip; }
+.gx-next {
+  position: absolute; top: 15vh; top: 15svh; left: 0; right: 0; margin-inline: auto; width: min(var(--wide), calc(100% - 2 * var(--gutter)));
+  height: 86vh; height: 86svh; display: flex; flex-direction: column; align-items: flex-start;
+  padding: 1.1rem clamp(1.4rem, 4vw, 3.2rem) 0; border-radius: 26px; text-decoration: none; color: var(--text);
+  background: var(--bg-2); border: 1px solid var(--line-2); box-shadow: 0 -24px 60px rgb(0 0 0 / .45);
+  transform-origin: 50% 0; transform: scale(.965); transition: border-color .25s;
+}
+.gx-grab { align-self: center; width: 40px; height: 5px; border-radius: 3px; background: var(--text-3); margin-bottom: clamp(1.6rem, 4vh, 2.6rem); transition: background .25s, width .25s var(--ease); }
+.gx-next-title { font-size: clamp(2.6rem, 6.5vw, 5.2rem); font-weight: 600; letter-spacing: calc(var(--k) * -0.055em); line-height: 1; }
+.gx-next-sub { margin-top: .6rem; font-size: clamp(1.05rem, 1.6vw, 1.3rem); color: var(--text-2); }
+.gx-next-img { margin-top: clamp(1.4rem, 4vh, 2.4rem); width: 100%; height: auto; border-radius: 14px; }
+@media (hover: hover) and (pointer: fine) {
+  .gx-next:hover { border-color: var(--text-3); }
+  .gx-next:hover .gx-grab { background: var(--text-2); width: 48px; }
+}
+.gx-sheet.leaving .gx { opacity: 0 !important; transition: opacity .3s; }
 @media (max-width: 640px) { .gx-more { display: none; } }
 
 /* projects: bento with exact cells */
