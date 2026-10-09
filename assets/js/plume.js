@@ -194,7 +194,10 @@
   var tlState = document.querySelector("[data-tl-state]"), tlThr = document.querySelector("[data-tl-thr]");
   var lastState = "", lastThr = "";
   function telemetry(state, pct) {
-    if (tlState && state !== lastState) { tlState.textContent = lastState = state; }
+    if (tlState && state !== lastState) {
+      tlState.textContent = lastState = state;
+      tlState.parentNode.classList.toggle("steady", state === "Mainstage");   // once it's running, only the throttle shows
+    }
     var s = pct + "%";
     if (tlThr && s !== lastThr) { tlThr.textContent = lastThr = s; }
   }
