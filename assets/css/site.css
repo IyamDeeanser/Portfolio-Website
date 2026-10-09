@@ -367,7 +367,15 @@ section { position: relative; }
 .gx-bar { position: absolute; z-index: 3; top: 10px; right: var(--gutter); display: flex; align-items: center; gap: .6rem; }
 .gx-bar .pill { height: 40px; }
 .gx-close { background: rgb(255 255 255 / .06); }
-html.gx-open.lenis.lenis-stopped { overflow: visible; }   /* keep the page (and its scrollbar) exactly where the tile is */
+html.gx-open.lenis.lenis-stopped { overflow: visible; }
+/* the end of the tour: the write-up comes up next, and scrolling on into it opens it */
+.gx-end { height: 62vh; height: 62svh; display: grid; place-items: center; padding: 0 var(--gutter) env(safe-area-inset-bottom, 0px); }
+.gx-next { display: grid; justify-items: center; gap: .8rem; text-align: center; text-decoration: none; color: var(--text); }
+.gx-next b { font-size: clamp(2rem, 4.6vw, 3.6rem); font-weight: 600; letter-spacing: calc(var(--k) * -0.035em); line-height: 1.05; text-wrap: balance; }
+.gx-next-hint { font-size: .875rem; color: var(--text-3s); }
+.gx-next-bar { width: 148px; height: 3px; margin-top: .3rem; border-radius: 3px; background: var(--line-2); overflow: hidden; }
+.gx-next-bar i { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(var(--pull, 0)); }
+.gx-sheet.leaving .gx-track { opacity: 0; transition: transform .42s var(--ease), opacity .32s ease-in; }   /* keep the page (and its scrollbar) exactly where the tile is */
 @media (max-width: 640px) { .gx-more { display: none; } }
 
 /* projects: bento with exact cells */

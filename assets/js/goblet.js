@@ -332,6 +332,7 @@
   if (!scroller || !tile || !Spring) return;
   var tbox = tile.querySelector(".tile-img"), timg = tbox.querySelector("img");
   var side = root.querySelector(".gx-side"), bar = sheet.querySelector(".gx-bar"), closeBtn = sheet.querySelector(".gx-close");
+  var track = scroller.querySelector(".gx-track") || root, nextEl = sheet.querySelector(".gx-next");
   var state = 0, geo = null, pushed = false;           // state: 0 closed, 1 open or opening, -1 closing
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function contain(r, w, h) {
@@ -389,7 +390,7 @@
     setInert(true); onScreen = true;
     if (window.Lenis && !sLenis) {
       try {
-        sLenis = new window.Lenis({ wrapper: scroller, content: root, duration: 0.9, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+        sLenis = new window.Lenis({ wrapper: scroller, content: track, duration: 0.9, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
           wheelMultiplier: 1, touchMultiplier: 1.4, anchors: false, autoRaf: true, respectReducedMotion: false });
       } catch (e) { sLenis = null; }
     }
@@ -406,11 +407,76 @@
       state = 0; settle();
       sheet.classList.remove("open"); tile.classList.remove("opened");
       if (sLenis) { sLenis.destroy(); sLenis = null; }
-      scroller.scrollTop = 0; mid = cur = 0; home = 0; onScreen = false; setActive(0);
+      scroller.scrollTop = 0; mid = cur = 0; home = 0; onScreen = false; setActive(0); resetPull();
       document.documentElement.classList.remove("gx-open");
       if (window.__lenis) window.__lenis.start();
     });
   }
+  // ---- the end: past the last part the write-up comes up next. Scrolling on from the very bottom meets
+  // resistance (the page lifts a little and a bar fills); keep going and it opens the write-up.
+  // A gesture only counts once the scroll has come to rest at the bottom, so the scroll that arrives
+  // there (or a trackpad's momentum) never carries straight through.
+  var THRESH = 280, pull = 0, armed = false, lastWheel = 0, lastScroll = 0, leaving = false, relaxT = 0, ty0 = null, fetched = false;
+  function atEnd() { return scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2; }
+  var ps = new Spring(function (v) {
+    var x = Math.max(0, v.x), lift = 110 * (1 - Math.exp(-x / 170));
+    if (!leaving) track.style.transform = x > 0.5 ? "translateY(" + (-lift).toFixed(1) + "px)" : "";
+    if (nextEl) nextEl.style.setProperty("--pull", Math.min(1, x / THRESH).toFixed(3));
+  });
+  function relax() { clearTimeout(relaxT); pull = 0; if (!leaving) ps.to({ x: 0 }, { damping: 1, response: 0.4 }); }
+  function resetPull() {
+    clearTimeout(relaxT); pull = 0; armed = false; ty0 = null; leaving = false;
+    sheet.classList.remove("leaving"); ps.set({ x: 0 });
+  }
+  function go() {
+    if (leaving || !nextEl) return;
+    leaving = true; clearTimeout(relaxT); ps.stop();
+    if (nextEl) nextEl.style.setProperty("--pull", 1);
+    sheet.classList.add("leaving"); track.offsetWidth;
+    track.style.transform = "translateY(-28vh)";
+    setTimeout(function () { location.href = nextEl.href; }, 380);
+  }
+  function addPull(d) {
+    if (leaving) return;
+    pull = Math.max(0, pull + d); ps.set({ x: pull });
+    clearTimeout(relaxT);
+    if (pull >= THRESH) go(); else relaxT = setTimeout(relax, 650);     // let go and it settles back
+  }
+  scroller.addEventListener("scroll", function () {
+    lastScroll = performance.now();
+    if (!atEnd()) { armed = false; if (pull > 0) relax(); }
+    else if (!fetched && nextEl) {                       // warm the write-up so the hand-off is instant
+      fetched = true;
+      var l = document.createElement("link"); l.rel = "prefetch"; l.href = nextEl.href; document.head.appendChild(l);
+    }
+  }, { passive: true });
+  scroller.addEventListener("wheel", function (e) {
+    if (state !== 1) return;
+    var now = performance.now(), gap = now - lastWheel; lastWheel = now;
+    var d = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? scroller.clientHeight : 1);
+    if (!atEnd() || now - lastScroll < 120) { armed = false; return; }
+    if (!armed) { if (gap < 150 || d <= 0) return; armed = true; }   // a fresh scroll, started at rest
+    if (d > 0) addPull(Math.min(d, 160)); else if (pull > 0) addPull(Math.max(d, -160));
+  }, { passive: true });
+  scroller.addEventListener("touchstart", function (e) { ty0 = atEnd() ? e.touches[0].clientY : null; }, { passive: true });
+  scroller.addEventListener("touchmove", function (e) {
+    if (state !== 1 || leaving) return;
+    var y = e.touches[0].clientY;
+    if (ty0 == null) { if (atEnd()) ty0 = y; return; }
+    pull = Math.max(0, (ty0 - y) * 1.6); clearTimeout(relaxT); ps.set({ x: pull });
+  }, { passive: true });
+  scroller.addEventListener("touchend", function () {
+    if (ty0 == null) return; ty0 = null;
+    if (pull >= THRESH) go(); else relax();
+  }, { passive: true });
+  document.addEventListener("keydown", function (e) {
+    if (state !== 1 || !atEnd() || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === " " && e.target.closest && e.target.closest("a, button")) return;
+    if (/^(ArrowDown|PageDown|End| )$/.test(e.key)) { e.preventDefault(); addPull(e.key === "ArrowDown" ? 90 : 150); }
+  });
+  // coming back from the write-up (back button, page restored from cache): the tour is as it was
+  window.addEventListener("pageshow", function (e) { if (e.persisted && leaving) { resetPull(); track.style.transform = ""; } });
+
   // the browser's back button closes the tour; #goblet opens it
   function openNav() { open(); if (!pushed) { history.pushState({ gxTour: 1 }, "", "#goblet"); pushed = true; } }
   function closeNav() {
