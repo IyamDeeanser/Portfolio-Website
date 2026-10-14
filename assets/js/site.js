@@ -133,6 +133,47 @@
     locUpdate();
   }
 
+  /* project filter: show the tiles of one type. Tiles that stay glide from where they were to where they land
+     (FLIP), and ones that appear fade up; filtered, the bento becomes an even grid (see CSS). */
+  var pfBar = document.querySelector(".pf"), bento = document.querySelector(".bento");
+  if (pfBar && bento) {
+    var pfTiles = Array.prototype.slice.call(bento.querySelectorAll(".tile"));
+    var pfBtns = Array.prototype.slice.call(pfBar.querySelectorAll("button[data-f]"));
+    var pfStatus = document.querySelector("[data-pf-status]");
+    var EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+    var applyFilter = function (f) {
+      var before = new Map();
+      pfTiles.forEach(function (t) { if (t.getAnimations) t.getAnimations().forEach(function (x) { x.cancel(); }); if (!t.hidden) before.set(t, t.getBoundingClientRect()); });
+      var n = 0;
+      pfTiles.forEach(function (t) {
+        var show = f === "all" || (" " + (t.getAttribute("data-tags") || "") + " ").indexOf(" " + f + " ") >= 0;
+        t.hidden = !show; if (show) n++;
+      });
+      bento.classList.toggle("filtered", f !== "all");
+      pfBtns.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-f") === f ? "true" : "false"); });
+      if (pfStatus) pfStatus.textContent = "Showing " + n + " project" + (n === 1 ? "" : "s");
+      if (!pfTiles[0].animate) return;
+      pfTiles.forEach(function (t, i) {
+        if (t.hidden) return;
+        t.classList.add("in", "now");                      // never wait on the scroll reveal for a tile that just appeared
+        var a = before.get(t), b = t.getBoundingClientRect();
+        if (a) {
+          var dx = a.left - b.left, dy = a.top - b.top;
+          if (Math.abs(dx) < 1 && Math.abs(dy) < 1 && Math.abs(a.width - b.width) < 1) return;
+          t.animate([{ transform: "translate(" + dx + "px," + dy + "px)", opacity: a.width !== b.width ? 0.55 : 1 }, { transform: "none", opacity: 1 }],
+                    { duration: 560, easing: EASE });
+        } else {
+          t.animate([{ opacity: 0, transform: "translateY(14px) scale(.98)" }, { opacity: 1, transform: "none" }],
+                    { duration: 480, delay: Math.min(i, 6) * 30, easing: EASE, fill: "backwards" });
+        }
+      });
+    };
+    pfBar.addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-f]");
+      if (b && b.getAttribute("aria-pressed") !== "true") applyFilter(b.getAttribute("data-f"));
+    });
+  }
+
   /* where am I: the nav link for the section you are reading lights up, and a bar slides under it.
      A section counts as current once its top passes 35% of the way down the screen. On project pages
      Portfolio is always current. On phones the link row scrolls itself to keep the current one in view. */

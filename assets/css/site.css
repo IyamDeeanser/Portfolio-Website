@@ -405,8 +405,30 @@ html.gx-open.lenis.lenis-stopped { overflow: visible; }
 .gx-navclone { pointer-events: none; z-index: 4; opacity: 0; }
 @media (max-width: 640px) { .gx-more { display: none; } }
 
+/* project filter: one row of type buttons; the chosen one is filled. Filtered, the tiles drop their bento
+   spans and sit in an even grid (a curated bento only works with every project in it) */
+.pf { display: flex; gap: .4rem; margin-top: 2rem; flex-wrap: wrap; }
+.pf button {
+  font: inherit; font-family: var(--mono); font-size: .72rem; text-transform: uppercase; letter-spacing: .07em;
+  height: 36px; padding: 0 .85rem; display: inline-flex; align-items: center; gap: .6rem; cursor: pointer;
+  color: var(--text-2); background: none; border: 1px solid var(--line-2); transition: color .2s, background .2s, border-color .2s;
+}
+.pf button span { color: var(--text-3s); font-size: .68rem; transition: color .2s; }
+.pf button[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+.pf button[aria-pressed="true"] span { color: var(--bg); opacity: .6; }
+.pf button:active { transform: translateY(1px); }
+@media (hover: hover) and (pointer: fine) { .pf button[aria-pressed="false"]:hover { color: var(--text); border-color: var(--text-2); } }
+@media (max-width: 640px) {
+  .pf { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+  .pf::-webkit-scrollbar { display: none; }
+  .pf button { flex: none; }
+}
+.bento .tile[hidden] { display: none; }
+.bento.filtered .tile.tile { grid-column: auto; grid-row: auto; flex-direction: column; }
+.bento.filtered .tile.tile .tile-img { aspect-ratio: 16 / 10; min-height: 0; flex: none; width: auto; max-height: none; }
+
 /* projects: bento with exact cells */
-.bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 16px; margin-top: 3rem; }
+.bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 16px; margin-top: 1.6rem; }
 .tile {
   position: relative; display: flex; flex-direction: column; text-decoration: none; background: var(--bg-2);
   border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; transition: border-color .3s;
