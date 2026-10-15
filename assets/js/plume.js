@@ -205,8 +205,6 @@
   // ---------------------------------------------------------------- sequence
   var seq0 = null;               // performance.now()/1000 at which the igniter fires
   var lastNow = 0, spark = 0, thr = 1, thrTarget = 1, lit = false;
-  // commanded shutdown (the "Currently building Goblet" link): throttle down, cut off, then report back
-  var shutT0 = null, shutDone = null;
 
   function ss(a, b, x) { x = Math.min(1, Math.max(0, (x - a) / (b - a))); return x * x * (3 - 2 * x); }
   function draw(now) {
@@ -234,18 +232,8 @@
     }
     // the engine spools toward the throttle the scroll position asks for
     thr += (thrTarget - thr) * (1 - Math.exp(-dt / 0.22));
-    var thrNow = thr;
-    if (shutT0 !== null) {
-      // shutdown: throttle down over 0.9 s, then the main valves close and the flame dies in a blink
-      var e = t - shutT0, down = Math.min(1, e / 0.9);
-      thrNow = thr * (1 - down * down * (3 - 2 * down)) + 0.0001;
-      var cut = e < 0.9 ? 1 : Math.exp(-(e - 0.9) / 0.07);
-      P *= cut; flash = 0;
-      state = e < 0.9 ? "Shutdown" : "Engine off";
-      if (e > 1.25 && shutDone) { var cb = shutDone; shutDone = null; setTimeout(cb, 0); }
-    }
-    P *= thrNow;
-    telemetry(state, P > 0.01 ? Math.round(thrNow * 100) : 0);
+    P *= thr;
+    telemetry(state, P > 0.01 ? Math.round(thr * 100) : 0);
 
     gl.uniform2f(U.uExit, exitPx[0], exitPx[1]);
     gl.uniform1f(U.uR, radPx);
@@ -281,19 +269,6 @@
     requestAnimationFrame(loop);
   }
   function start() { if (!running && !reduce) { running = true; requestAnimationFrame(loop); } }
-  // for goblet.js: shut the engine down (done() once it is off), and light it again later
-  window.__plume = {
-    shutdown: function (done) {
-      if (!lit) skip();
-      shutT0 = performance.now() / 1000; shutDone = done || null; start();
-    },
-    relight: function () {
-      if (shutT0 === null) return;
-      shutT0 = null; shutDone = null;
-      seq0 = performance.now() / 1000 - IGNITER;          // straight to main-stage ignition: hard start, flash, steady
-      start();
-    }
-  };
   function still() { if (reduce) draw(performance.now()); }
 
   function arm() {
