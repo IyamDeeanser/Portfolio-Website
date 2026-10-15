@@ -409,16 +409,6 @@
     vids.forEach(function (v) { vo.observe(v); });
   }
 
-  /* embeds load on click */
-  document.querySelectorAll(".embed[data-src]").forEach(function (box) {
-    var b = box.querySelector(".play");
-    b && b.addEventListener("click", function () {
-      var f = document.createElement("iframe");
-      f.src = box.getAttribute("data-src"); f.title = box.getAttribute("data-title") || "Embedded media";
-      f.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"; f.allowFullscreen = true;
-      box.appendChild(f); box.querySelector(".embed-ui").hidden = true;
-    });
-  });
 
   /* table of contents */
   var toc = document.querySelectorAll(".toc a");
