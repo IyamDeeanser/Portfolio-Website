@@ -165,7 +165,7 @@ canvas.plume { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
   display: flex; align-items: center; gap: .6rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3s);
 }
 .telemetry.steady [data-tl-state], .telemetry.steady .tl-sep { display: none; }   /* running steady: just the throttle */
-.telemetry .dot { width: 6px; height: 6px; background: var(--accent); }
+.telemetry .dot { flex: none; width: 6px; height: 6px; margin-right: .15rem; background: var(--accent); }
 .telemetry b { color: var(--text-2); font-weight: 500; font-variant-numeric: tabular-nums; display: inline-block; min-width: 4ch; }
 /* ignition: the window waits dark (the page itself does not), and lights at main-stage ignition */
 .hero-dark { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; background: #000; }

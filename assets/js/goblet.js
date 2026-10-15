@@ -375,7 +375,7 @@
     sheet.style.clipPath = sheet.style.opacity = stage.style.transform = side.style.opacity = bar.style.opacity = "";
     uiO = leadO = 1;
   }
-  function open() {
+  function open(viaHero) {
     if (state === 1) return;
     load();
     var resume = state === -1;
@@ -383,7 +383,7 @@
     if (!resume) {
       sheet.classList.add("open");
       scroller.scrollTop = 0; layout(); mid = cur = 0; primed = true;
-      geo = measure(); sp.set({ p: 0 });
+      geo = viaHero ? { fade: true, vw: sheet.clientWidth, vh: sheet.clientHeight } : measure(); sp.set({ p: 0 });
     }
     tile.classList.add("opened");
     document.documentElement.classList.add("gx-open");
@@ -401,11 +401,20 @@
   function close() {
     if (state !== 1) return;
     state = -1;
-    geo = measure();
+    var back = heroLaunch ? heroGeom() : null;           // opened from the hero: the engine flies back to its stand
+    geo = heroLaunch ? { fade: true, vw: sheet.clientWidth, vh: sheet.clientHeight } : measure();
     setInert(false);
-    try { tile.focus({ preventScroll: true }); } catch (e) {}
-    sp.to({ p: 0 }, { damping: 1, response: 0.45 }, function () {
-      state = 0; settle();
+    if (back) {
+      stage.style.opacity = 0;
+      fly(back, false, 950, function () { back.img.style.visibility = ""; if (window.__plume) window.__plume.relight(); });
+    } else if (heroLaunch) {
+      var hi = document.querySelector(".hero-engine"); if (hi) hi.style.visibility = "";
+      if (window.__plume) window.__plume.relight();
+    }
+    heroLaunch = false;
+    try { (back ? callout : tile).focus({ preventScroll: true }); } catch (e) {}
+    sp.to({ p: 0 }, { damping: 1, response: back ? 0.6 : 0.45 }, function () {
+      state = 0; settle(); stage.style.opacity = "";
       sheet.classList.remove("open"); tile.classList.remove("opened");
       if (sLenis) { sLenis.destroy(); sLenis = null; }
       scroller.scrollTop = 0; mid = cur = 0; home = 0; onScreen = false; setActive(0); resetPull();
@@ -504,8 +513,71 @@
   // coming back from the write-up (back button, page restored from cache): the tour is as it was
   window.addEventListener("pageshow", function (e) { if (e.persisted && leaving) resetPull(); });
 
+  // ---- from the hero: "Currently building Goblet" shuts the engine down on its stand (plume.js), then the
+  // engine itself turns upright and flies into its place in the tour as the tour fades in around it. Closing
+  // runs it back: the engine flies home, turns on its side, and relights.
+  var callout = document.querySelector(".hero .callout"), heroLaunch = false, launching = false;
+  var EBOX = conf.engineBox || [0.355, 0.061, 0.654, 0.964];   // the engine's extent in the tour's first frame
+  function heroGeom() {
+    var img = document.querySelector(".hero-engine");
+    if (!img) return null;
+    var r = img.getBoundingClientRect();
+    if (!(r.width > 0 && r.bottom > 0 && r.top < window.innerHeight)) return null;
+    var iw = F ? F.w : conf.still.w, ih = F ? F.h : conf.still.h, pr = pin.getBoundingClientRect();
+    var fr = contain({ left: pr.left + stage.offsetLeft, top: pr.top + stage.offsetTop, width: stage.offsetWidth, height: stage.offsetHeight }, iw, ih);
+    var tx = fr.left + (EBOX[0] + EBOX[2]) / 2 * fr.width, ty = fr.top + (EBOX[1] + EBOX[3]) / 2 * fr.height;
+    var sc = (EBOX[3] - EBOX[1]) * fr.height / r.width;          // the side view's length becomes the upright height
+    var ex = r.left + r.width / 2, ey = r.top + r.height / 2;   // the render is cropped tight, so its centre is the engine's
+    return { img: img, r: r, to: "translate(" + (tx - ex).toFixed(1) + "px," + (ty - ey).toFixed(1) + "px) rotate(90deg) scale(" + sc.toFixed(4) + ")" };
+  }
+  // a stand-in for the engine image, flown above everything (nozzle right -> nozzle down is a quarter turn clockwise)
+  function fly(g, forward, dur, done) {
+    var c = g.img.cloneNode(false);
+    c.removeAttribute("class"); c.alt = "";
+    c.style.cssText = "position:fixed;z-index:90;margin:0;pointer-events:none;max-width:none;transform-origin:50% 50%;" +
+      "left:" + g.r.left + "px;top:" + g.r.top + "px;width:" + g.r.width + "px;height:" + g.r.height + "px";
+    document.body.appendChild(c);
+    g.img.style.visibility = "hidden";
+    var kf = [{ transform: "none" }, { transform: g.to }];
+    if (!forward) kf.reverse();
+    c.animate(kf, { duration: dur, easing: "cubic-bezier(0.65, 0, 0.25, 1)", fill: "forwards" }).onfinish = function () {
+      if (forward) {
+        // landed exactly on the tour's first frame: hand over to it
+        stage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, fill: "forwards" }).onfinish = function () { stage.style.opacity = ""; this.cancel(); };
+        c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, delay: 60, fill: "forwards" }).onfinish = function () { c.remove(); };
+      } else c.remove();
+      if (done) done();
+    };
+    return c;
+  }
+  function launchFromHero() {
+    if (state !== 0 || launching) return;
+    if (!window.__plume || !heroGeom()) { openNav(); return; }
+    launching = true; load();
+    if (window.__lenis) window.__lenis.stop();             // hold the page still while the engine winds down
+    var went = false;
+    var go = function () {
+      if (went) return; went = true;
+      launching = false;
+      sheet.classList.add("open"); sheet.style.opacity = 0;
+      scroller.scrollTop = 0; layout(); mid = cur = 0; primed = true; draw();
+      var g = heroGeom();
+      heroLaunch = true;
+      if (!g) { openNav(); return; }
+      stage.style.opacity = 0;
+      fly(g, true, 1150);
+      setTimeout(function () { openNav(true); }, 380);     // the tour fades in around the arriving engine
+    };
+    window.__plume.shutdown(go);
+    setTimeout(go, 2600);                                  // never left waiting (say the flame stopped rendering)
+  }
+  if (callout) callout.addEventListener("click", function (e) {
+    if (e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // new tab: the Goblet page
+    e.preventDefault(); launchFromHero();
+  });
+
   // the browser's back button closes the tour; #goblet opens it
-  function openNav() { open(); if (!pushed) { history.pushState({ gxTour: 1 }, "", "#goblet"); pushed = true; } }
+  function openNav(viaHero) { open(viaHero === true); if (!pushed) { history.pushState({ gxTour: 1 }, "", "#goblet"); pushed = true; } }
   function closeNav() {
     if (pushed && history.state && history.state.gxTour) history.back();
     else { close(); pushed = false; history.replaceState(null, "", location.pathname + location.search); }
