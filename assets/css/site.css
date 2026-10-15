@@ -172,7 +172,7 @@ canvas.plume { position: absolute; inset: 0; width: 100%; height: 100%; z-index:
   display: flex; align-items: center; gap: .6rem; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3s);
 }
 .telemetry.steady [data-tl-state], .telemetry.steady .tl-sep { display: none; }   /* running steady: just the throttle */
-.telemetry .dot { width: 6px; height: 6px; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+.telemetry .dot { flex: none; width: 6px; height: 6px; margin-right: .15rem; background: var(--accent); box-shadow: 0 0 6px rgb(234 140 94 / .55); }
 .telemetry b { color: var(--text-2); font-weight: 500; font-variant-numeric: tabular-nums; display: inline-block; min-width: 4ch; }
 
 /* ignition sequence. html.ign-pre is set before first paint (motion allowed, landing at the top):
