@@ -115,7 +115,10 @@
   function load() {
     if (loaded) return; loaded = true;
     still.src = conf.still.src;
-    if (F) avifOK(function (ok) { loadPacks(!ok && F.fb ? F.fb : (narrow.matches && F.m ? F.m : F.d)); });
+    if (F) avifOK(function (ok) {
+      loadPacks(!ok && F.fb ? F.fb : (narrow.matches && F.m ? F.m : F.d));
+      if (ok && TURN && hasCallout()) loadTurn();
+    });
   }
   // fetch in the background soon after the page settles (the hero's ignition), so the frames are usually
   // all here before anyone scrolls this far; on data-saver or slow connections, wait until the tour is near
@@ -125,6 +128,21 @@
     if (document.readyState === "complete") soon(); else window.addEventListener("load", soon);
   }
   function ready(im) { return im && im.complete && im.naturalWidth; }
+  // the hero-to-tour turn: a rendered clip of the engine turning from its hero pose to the tour's first frame
+  var TURN = conf.turn || null, turnFrames = [], turnAsked = false;
+  function hasCallout() { var c = document.querySelector(".hero .callout"); return !!(c && c.offsetParent); }
+  function loadTurn() {
+    if (turnAsked || !TURN) return; turnAsked = true;
+    getPack(TURN.src, function (first, step, blobs) {
+      if (!blobs) { TURN = null; return; }
+      blobs.forEach(function (b, k) { var im = new Image(); im.decoding = "async"; im.src = URL.createObjectURL(b); turnFrames[first + k * step] = im; });
+    });
+  }
+  function turnReady() {
+    if (!TURN || turnFrames.length < TURN.n) return false;
+    for (var i = 0; i < TURN.n; i++) if (!ready(turnFrames[i])) return false;
+    return true;
+  }
   function nearest(k) {
     for (var d = 0; d < F.count; d++) {                 // nearest frame that has arrived
       if (ready(frames[k - d])) return frames[k - d];
@@ -404,11 +422,23 @@
     var back = heroLaunch ? heroGeom() : null;           // opened from the hero: the engine flies back to its stand
     geo = heroLaunch ? { fade: true, vw: sheet.clientWidth, vh: sheet.clientHeight } : measure();
     setInert(false);
-    if (back) {
+    if (back && turnReady()) {
+      stage.style.opacity = 0;
+      var c = turnCanvas(), from = tourPlace();
+      turnDraw(c, 0); turnPlace(c, from);
+      turnPlay(c, from, heroPlace(), 0, TURN.n - 1, 1700, function () {
+        // home: the hero still comes back as the engine relights
+        back.img.style.visibility = "";
+        back.img.getAnimations().forEach(function (a) { if (!(window.CSSAnimation && a instanceof CSSAnimation)) a.cancel(); });
+        back.img.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 450, easing: "ease-in-out" }).onfinish = function () { back.img.style.opacity = ""; };
+        c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, easing: "ease-in-out", fill: "forwards" }).onfinish = function () { c.remove(); };
+        if (window.__plume) window.__plume.relight();
+      });
+    } else if (back) {
       stage.style.opacity = 0;
       fly(back, false, 950, function () { back.img.style.visibility = ""; if (window.__plume) window.__plume.relight(); });
     } else if (heroLaunch) {
-      var hi = document.querySelector(".hero-engine"); if (hi) hi.style.visibility = "";
+      var hi = document.querySelector(".hero-engine"); if (hi) { hi.style.visibility = ""; hi.getAnimations().forEach(function (x) { if (!(window.CSSAnimation && x instanceof CSSAnimation)) x.cancel(); }); }
       if (window.__plume) window.__plume.relight();
     }
     heroLaunch = false;
@@ -550,6 +580,39 @@
     };
     return c;
   }
+  // the turn clip, drawn on a canvas floated over everything (screen blend: its black background vanishes) and
+  // placed by scale + offset so a frame sits exactly on the hero still (last frame) or the tour (first frame)
+  function turnCanvas() {
+    var c = document.createElement("canvas"); c.width = TURN.w; c.height = TURN.h;
+    c.style.cssText = "position:fixed;left:0;top:0;z-index:90;pointer-events:none;mix-blend-mode:screen;transform-origin:0 0;" +
+      "width:" + TURN.w + "px;height:" + TURN.h + "px";
+    document.body.appendChild(c); return c;
+  }
+  function turnDraw(c, i) { c.getContext("2d").drawImage(turnFrames[i], 0, 0, TURN.w, TURN.h); }
+  function heroPlace() {
+    var img = document.querySelector(".hero-engine"), r = img.getBoundingClientRect(), k = r.width / (img.naturalWidth || 2219), h = TURN.hero;
+    return { s: h[0] * k, x: r.left + h[1] * k, y: r.top + h[2] * k };
+  }
+  function tourPlace() {
+    var pr = pin.getBoundingClientRect(), iw = F ? F.w : conf.still.w, ih = F ? F.h : conf.still.h;
+    var fr = contain({ left: pr.left + stage.offsetLeft, top: pr.top + stage.offsetTop, width: stage.offsetWidth, height: stage.offsetHeight }, iw, ih);
+    var k = fr.width / iw, t = TURN.tour;
+    return { s: t[0] * k, x: fr.left + t[1] * k, y: fr.top + t[2] * k };
+  }
+  function turnPlace(c, a) { c.style.transform = "translate(" + a.x.toFixed(2) + "px," + a.y.toFixed(2) + "px) scale(" + a.s.toFixed(5) + ")"; }
+  // play the clip from frame i0 to i1 (it turns at its own pace, 60 fps) while it travels from a to b
+  function turnPlay(c, a, b, i0, i1, dur, done) {
+    var t0 = 0;
+    var step = function (now) {
+      if (!t0) t0 = now;
+      var t = Math.min(1, (now - t0) / dur), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      turnDraw(c, Math.round(i0 + (i1 - i0) * t));
+      turnPlace(c, { s: a.s + (b.s - a.s) * e, x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e });
+      if (t < 1) requestAnimationFrame(step); else if (done) done();
+    };
+    requestAnimationFrame(step);
+  }
+  var turnC = null;
   function launchFromHero() {
     if (state !== 0 || launching) return;
     if (!window.__plume || !heroGeom()) { openNav(); return; }
@@ -563,11 +626,36 @@
       scroller.scrollTop = 0; layout(); mid = cur = 0; primed = true; draw();
       var g = heroGeom();
       heroLaunch = true;
-      if (!g) { openNav(); return; }
+      if (!g) {                                            // the hero went off screen meanwhile: just open
+        if (turnC) { turnC.remove(); turnC = null; }
+        heroImg.getAnimations().forEach(function (x) { if (!(window.CSSAnimation && x instanceof CSSAnimation)) x.cancel(); });
+        openNav(); return;
+      }
       stage.style.opacity = 0;
-      fly(g, true, 1150);
-      setTimeout(function () { openNav(true); }, 380);     // the tour fades in around the arriving engine
+      if (turnC) {
+        var c = turnC;
+        heroImg.style.visibility = "hidden";
+        turnPlay(c, heroPlace(), tourPlace(), TURN.n - 1, 0, 2000, function () {
+          // landed on the tour's first frame: hand over to it
+          stage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 240, fill: "forwards" }).onfinish = function () { stage.style.opacity = ""; this.cancel(); };
+          c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, delay: 60, fill: "forwards" }).onfinish = function () { c.remove(); if (turnC === c) turnC = null; };
+        });
+        setTimeout(function () { openNav(true); }, 500);   // the tour fades in around the turning engine
+      } else {
+        fly(g, true, 1150);
+        setTimeout(function () { openNav(true); }, 380);   // the tour fades in around the arriving engine
+      }
     };
+    var heroImg = document.querySelector(".hero-engine");
+    if (turnReady()) {
+      // as the engine throttles down, the hero still gives way to the clip's first frame (rendered a touch
+      // darker, which reads as the flame's light going out)
+      setTimeout(function () {
+        turnC = turnCanvas(); turnDraw(turnC, TURN.n - 1); turnPlace(turnC, heroPlace());
+        turnC.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, easing: "ease-in-out", fill: "forwards" });
+        heroImg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, easing: "ease-in-out", fill: "forwards" });
+      }, 350);
+    }
     window.__plume.shutdown(go);
     setTimeout(go, 2600);                                  // never left waiting (say the flame stopped rendering)
   }
